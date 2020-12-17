@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevRating.SqlServerClient",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevRating.SqlServerClient.Test", "SqlServerClient.Test\DevRating.SqlServerClient.Test.csproj", "{34B0C686-EACF-47B2-98ED-DCDFA4BF8D3B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevRating.WebApi.Domain", "WebApi.Domain\DevRating.WebApi.Domain.csproj", "{05EE1AA3-C335-466D-AA17-B58F4CB07F61}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -58,5 +60,17 @@ Global
 		{34B0C686-EACF-47B2-98ED-DCDFA4BF8D3B}.Release|x64.Build.0 = Release|Any CPU
 		{34B0C686-EACF-47B2-98ED-DCDFA4BF8D3B}.Release|x86.ActiveCfg = Release|Any CPU
 		{34B0C686-EACF-47B2-98ED-DCDFA4BF8D3B}.Release|x86.Build.0 = Release|Any CPU
+		{05EE1AA3-C335-466D-AA17-B58F4CB07F61}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{05EE1AA3-C335-466D-AA17-B58F4CB07F61}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{05EE1AA3-C335-466D-AA17-B58F4CB07F61}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{05EE1AA3-C335-466D-AA17-B58F4CB07F61}.Debug|x64.Build.0 = Debug|Any CPU
+		{05EE1AA3-C335-466D-AA17-B58F4CB07F61}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{05EE1AA3-C335-466D-AA17-B58F4CB07F61}.Debug|x86.Build.0 = Debug|Any CPU
+		{05EE1AA3-C335-466D-AA17-B58F4CB07F61}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{05EE1AA3-C335-466D-AA17-B58F4CB07F61}.Release|Any CPU.Build.0 = Release|Any CPU
+		{05EE1AA3-C335-466D-AA17-B58F4CB07F61}.Release|x64.ActiveCfg = Release|Any CPU
+		{05EE1AA3-C335-466D-AA17-B58F4CB07F61}.Release|x64.Build.0 = Release|Any CPU
+		{05EE1AA3-C335-466D-AA17-B58F4CB07F61}.Release|x86.ActiveCfg = Release|Any CPU
+		{05EE1AA3-C335-466D-AA17-B58F4CB07F61}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
