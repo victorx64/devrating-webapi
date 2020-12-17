@@ -10,9 +10,11 @@ namespace DevRating.SqlServerClient
         private readonly ContainsRatingOperation _contains;
 
         public SqlServerRatings(IDbConnection connection)
-            : this(new SqlServerInsertRatingOperation(connection),
+            : this(
+                new SqlServerInsertRatingOperation(connection),
                 new SqlServerGetRatingOperation(connection),
-                new SqlServerContainsRatingOperation(connection))
+                new SqlServerContainsRatingOperation(connection)
+            )
         {
         }
 
