@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net5.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="DevRating.DefaultObject" Version="4.0.1" />
+      <PackageReference Include="Microsoft.Data.SqlClient" Version="1.1.1" />
+    </ItemGroup>
+
+</Project>
