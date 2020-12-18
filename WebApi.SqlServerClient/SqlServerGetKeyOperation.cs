@@ -2,7 +2,7 @@ using System.Data;
 using DevRating.Domain;
 using DevRating.WebApi.Domain;
 
-namespace DevRating.SqlServerClient
+namespace DevRating.WebApi.SqlServerClient
 {
     internal class SqlServerGetKeyOperation : GetKeyOperation
     {

@@ -1,7 +1,7 @@
 using System.Data;
 using DevRating.WebApi.Domain;
 
-namespace DevRating.SqlServerClient
+namespace DevRating.WebApi.SqlServerClient
 {
     internal sealed class SqlServerUsers : Users
     {

@@ -4,7 +4,7 @@ using DevRating.DefaultObject;
 using DevRating.WebApi.Domain;
 using Microsoft.Data.SqlClient;
 
-namespace DevRating.SqlServerClient
+namespace DevRating.WebApi.SqlServerClient
 {
     internal class SqlServerInsertUserOperation : InsertUserOperation
     {

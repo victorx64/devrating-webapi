@@ -72,47 +72,7 @@ namespace DevRating.SqlServerClient
                             references Rating,
                     constraint UK_Work_Commits
                         unique (StartCommit, EndCommit)
-                );
-
-                alter table Rating
-                    add constraint FK_Rating_WorkId
-                        foreign key (WorkId) references Work;
-
-                create table User
-                (
-                    Id int identity
-                        constraint PK_User
-                            primary key,
-                    CreatedAt datetimeoffset(7) not null,
-                    ForeignId nvarchar(max) not null,
-                    constraint UK_User_ForeignId
-                        unique (ForeignId)
-                );
-
-                create table Organization
-                (
-                    Id int identity
-                        constraint PK_Organization
-                            primary key,
-                    CreatedAt datetimeoffset(7) not null,
-                    Name nvarchar(256) not null,
-                    UserId int not null
-                        constraint FK_Organization_UserId
-                            references User
-                );
-
-                create table Key
-                (
-                    Id int identity
-                        constraint PK_Key
-                            primary key,
-                    CreatedAt datetimeoffset(7) not null,
-                    Value nvarchar(256) not null,
-                    OrganizationId int not null
-                        constraint FK_Key_OrganizationId
-                            references Organization
-                );
-            ";
+                );";
 
             command.ExecuteNonQuery();
         }

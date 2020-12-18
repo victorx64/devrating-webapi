@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\SqlServerClient\DevRating.SqlServerClient.csproj" />
+    <ProjectReference Include="..\WebApi.SqlServerClient\DevRating.WebApi.SqlServerClient.csproj" />
   </ItemGroup>
 
 </Project>

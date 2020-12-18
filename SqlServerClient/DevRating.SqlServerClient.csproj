@@ -7,7 +7,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\WebApi.Domain\DevRating.WebApi.Domain.csproj" />
+      <PackageReference Include="DevRating.DefaultObject" Version="4.0.1" />
+      <PackageReference Include="Microsoft.Data.SqlClient" Version="1.1.1" />
     </ItemGroup>
 
 </Project>
