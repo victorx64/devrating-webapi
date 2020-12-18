@@ -37,27 +37,38 @@ namespace DevRating.WebApi.Controllers
 
             try
             {
-                var foreignId = User!.Claims!.First(c => c.Type.Equals("user_id")).Value;
+                var user = User!.Claims!.First(c => c.Type.Equals("user_id")).Value;
 
-                if (_db.Entities().Users().ContainsOperation().Contains(foreignId))
+                if (_db.Entities().Organizations().ContainsOperation().Contains(new DefaultId(organizationId), user))
                 {
-                    var userId = _db.Entities().Users().GetOperation().User(foreignId).Id();
-
-                    if (_db.Entities().Organizations().ContainsOperation().Contains(new DefaultId(organizationId), userId))
-                    {
-                        _db.Entities().Keys().InsertOperation().Insert(value, new DefaultId(organizationId), DateTimeOffset.UtcNow);
-
-                        return new OkResult();
-                    }
-                    else
-                    {
-                        return new BadRequestObjectResult("Organization not found");
-                    }
+                    return new OkObjectResult(
+                        _db.Entities().Keys().InsertOperation().Insert(value, new DefaultId(organizationId), DateTimeOffset.UtcNow).ToJson()
+                    );
                 }
                 else
                 {
-                    return new BadRequestObjectResult("User not found");
+                    return new BadRequestObjectResult("Organization not found");
                 }
+            }
+            finally
+            {
+                _db.Instance().Connection().Close();
+            }
+        }
+
+        [Authorize]
+        [HttpDelete("{id}")]
+        public IActionResult Delete(int id)
+        {
+            _db.Instance().Connection().Open();
+
+            try
+            {
+                var user = User!.Claims!.First(c => c.Type.Equals("user_id")).Value;
+
+                return new OkObjectResult(
+                    _db.Entities().Keys().InsertOperation().Revoke(new DefaultId(id), DateTimeOffset.UtcNow).ToJson()
+                );
             }
             finally
             {

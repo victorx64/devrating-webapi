@@ -33,5 +33,23 @@ namespace DevRating.WebApi.SqlServerClient
 
             return new SqlServerKey(_connection, new DefaultId(command.ExecuteScalar()!));
         }
+
+        public Key Revoke(Id id, DateTimeOffset revokedAt)
+        {
+            using var command = _connection.CreateCommand();
+
+            command.CommandText = @"
+                UPDATE Key
+                SET
+                    RevokedAt = @RevokedAt
+                OUTPUT Inserted.Id
+                WHERE
+                    Id = @Id";
+
+            command.Parameters.Add(new SqlParameter("@Id", SqlDbType.Int) {Value = id.Value()});
+            command.Parameters.Add(new SqlParameter("@RevokedAt", SqlDbType.DateTimeOffset) {Value = revokedAt});
+
+            return new SqlServerKey(_connection, new DefaultId(command.ExecuteScalar()!));
+        }
     }
 }

@@ -6,7 +6,7 @@ namespace DevRating.WebApi.Domain
     public interface Organization : Entity
     {
         string Name();
-        User User();
+        string User();
         DateTimeOffset CreatedAt();
     }
 }

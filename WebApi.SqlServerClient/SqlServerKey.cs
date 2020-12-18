@@ -23,13 +23,13 @@ namespace DevRating.WebApi.SqlServerClient
 
             command.CommandText = "SELECT CreatedAt FROM Key WHERE Id = @Id";
 
-            command.Parameters.Add(new SqlParameter("@Id", SqlDbType.Int) {Value = _id.Value()});
+            command.Parameters.Add(new SqlParameter("@Id", SqlDbType.Int) { Value = _id.Value() });
 
             using var reader = command.ExecuteReader();
 
             reader.Read();
 
-            return (DateTimeOffset) reader["CreatedAt"];
+            return (DateTimeOffset)reader["CreatedAt"];
         }
 
         public Id Id()
@@ -43,13 +43,30 @@ namespace DevRating.WebApi.SqlServerClient
 
             command.CommandText = "SELECT OrganizationId FROM Key WHERE Id = @Id";
 
-            command.Parameters.Add(new SqlParameter("@Id", SqlDbType.Int) {Value = _id.Value()});
+            command.Parameters.Add(new SqlParameter("@Id", SqlDbType.Int) { Value = _id.Value() });
 
             using var reader = command.ExecuteReader();
 
             reader.Read();
 
             return new SqlServerOrganization(_connection, new DefaultObject.DefaultId(reader["OrganizationId"]));
+        }
+
+        public DateTimeOffset? RevokedAt()
+        {
+            using var command = _connection.CreateCommand();
+
+            command.CommandText = "SELECT RevokedAt FROM Key WHERE Id = @Id";
+
+            command.Parameters.Add(new SqlParameter("@Id", SqlDbType.Int) { Value = _id.Value() });
+
+            using var reader = command.ExecuteReader();
+
+            reader.Read();
+
+            return reader["RevokedAt"] == DBNull.Value
+                ? null
+                : (DateTimeOffset?)reader["RevokedAt"];
         }
 
         public string ToJson()
@@ -63,13 +80,13 @@ namespace DevRating.WebApi.SqlServerClient
 
             command.CommandText = "SELECT Value FROM Key WHERE Id = @Id";
 
-            command.Parameters.Add(new SqlParameter("@Id", SqlDbType.Int) {Value = _id.Value()});
+            command.Parameters.Add(new SqlParameter("@Id", SqlDbType.Int) { Value = _id.Value() });
 
             using var reader = command.ExecuteReader();
 
             reader.Read();
 
-            return (string) reader["Value"];
+            return (string)reader["Value"];
         }
     }
 }

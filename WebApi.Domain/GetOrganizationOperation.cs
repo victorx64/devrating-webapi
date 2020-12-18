@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using DevRating.Domain;
 
 namespace DevRating.WebApi.Domain
@@ -6,5 +7,6 @@ namespace DevRating.WebApi.Domain
     {
         Organization Organization(Id id);
         Organization Organization(string name);
+        IEnumerable<Organization> OrganizationsByUser(string user);
     }
 }

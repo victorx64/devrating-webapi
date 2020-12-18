@@ -1,7 +1,6 @@
 using System;
 using System.Data;
 using DevRating.DefaultObject;
-using DevRating.Domain;
 using DevRating.WebApi.Domain;
 using Microsoft.Data.SqlClient;
 
@@ -16,7 +15,7 @@ namespace DevRating.WebApi.SqlServerClient
             _connection = connection;
         }
 
-        public Organization Insert(string name, Id user, DateTimeOffset createdAt)
+        public Organization Insert(string name, string user, DateTimeOffset createdAt)
         {
             using var command = _connection.CreateCommand();
 
@@ -27,7 +26,7 @@ namespace DevRating.WebApi.SqlServerClient
                 VALUES
                     (@UserId, @Name, @CreatedAt)";
 
-            command.Parameters.Add(new SqlParameter("@UserId", SqlDbType.Int) {Value = user.Value()});
+            command.Parameters.Add(new SqlParameter("@UserId", SqlDbType.NVarChar) {Value = user});
             command.Parameters.Add(new SqlParameter("@Name", SqlDbType.NVarChar, 256) {Value = name});
             command.Parameters.Add(new SqlParameter("@CreatedAt", SqlDbType.DateTimeOffset) {Value = createdAt});
 

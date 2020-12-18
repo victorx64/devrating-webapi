@@ -57,7 +57,7 @@ namespace DevRating.WebApi.SqlServerClient
             throw new NotImplementedException();
         }
 
-        public User User()
+        public string User()
         {
             using var command = _connection.CreateCommand();
 
@@ -69,7 +69,7 @@ namespace DevRating.WebApi.SqlServerClient
 
             reader.Read();
 
-            return new SqlServerUser(_connection, new DefaultObject.DefaultId(reader["ForeignId"]));
+            return (string) reader["UserId"];
         }
     }
 }
