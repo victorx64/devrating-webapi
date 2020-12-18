@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using DevRating.DefaultObject;
-using DevRating.Domain;
 using DevRating.EloRating;
-using DevRating.SqlServerClient;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
@@ -19,36 +18,46 @@ namespace DevRating.WebApi.Controllers
     public class DiffsController : ControllerBase
     {
         private readonly ILogger<DiffsController> _log;
-        private readonly Database _db;
+        private readonly DevRating.Domain.Database _domainDb;
+        private readonly DevRating.WebApi.Domain.Database _webDb;
 
         public DiffsController(ILogger<DiffsController> log, IConfiguration configuration)
-            : this (log, new SqlServerDatabase(new SqlConnection(configuration["ConnectionString"])))
+            : this (
+                log,
+                new DevRating.SqlServerClient.SqlServerDatabase(new SqlConnection(configuration["ConnectionString"])),
+                new DevRating.WebApi.SqlServerClient.SqlServerDatabase(new SqlConnection(configuration["ConnectionString"]))
+            )
         {
         }
 
-        private DiffsController(ILogger<DiffsController> log, Database db)
+        private DiffsController(
+            ILogger<DiffsController> log, 
+            DevRating.Domain.Database domainDb,
+            DevRating.WebApi.Domain.Database webDb
+        )
         {
             _log = log;
-            _db = db;
+            _domainDb = domainDb;
+            _webDb = webDb;
         }
 
         [Authorize]
-        [HttpPost("{key}")]
-        public IActionResult Post(string key, Dto diff)
+        [HttpPost]
+        public IActionResult Post(Dto diff)
         {
-            _db.Instance().Connection().Open();
+            _domainDb.Instance().Connection().Open();
 
-            using var transaction = _db.Instance().Connection().BeginTransaction();
+            using var transaction = _domainDb.Instance().Connection().BeginTransaction();
 
             try
             {
-                var factory = new DefaultEntityFactory(_db.Entities(), new EloFormula());
+                var factory = new DefaultEntityFactory(_domainDb.Entities(), new EloFormula());
 
                 var createdAt = DateTimeOffset.UtcNow;
 
                 var work = factory.InsertedWork(
                     diff.Organization,
-                    diff.Key,
+                    diff.Repository,
                     diff.Start,
                     diff.End,
                     diff.Since,
@@ -78,30 +87,69 @@ namespace DevRating.WebApi.Controllers
             }
             finally
             {
-                _db.Instance().Connection().Close();
+                _domainDb.Instance().Connection().Close();
             }
+        }
+
+        [HttpPost("{key}")]
+        public IActionResult Post(string key, Dto diff)
+        {
+            _webDb.Instance().Connection().Open();
+
+            try
+            {
+                if (_webDb.Entities().Organizations().ContainsOperation().Contains(diff.Organization))
+                {
+                    var org = _webDb.Entities().Organizations().GetOperation().Organization(diff.Organization).Id();
+
+                    if (!_webDb.Entities().Keys().ContainsOperation().Contains(org, key))
+                    {
+                        return new UnauthorizedObjectResult("Key not found");
+                    }
+                }
+                else
+                {
+                    return new BadRequestObjectResult("Organization not found");
+                }
+            }
+            finally
+            {
+                _webDb.Instance().Connection().Close();
+            }
+
+            return Post(diff);
         }
 
         public sealed class Dto
         {
+            [Required]
             public string Email { get; set; } = string.Empty;
+            [Required]
             public string Start { get; set; } = string.Empty;
+            [Required]
             public string End { get; set; } = string.Empty;
+            [Required]
             public string Organization { get; set; } = string.Empty;
             public string? Since { get; set; } = default;
-            public string Key { get; set; } = string.Empty;
+            [Required]
+            public string Repository { get; set; } = string.Empty;
             public string? Link { get; set; } = default;
+            [Required]
             public uint Additions { get; set; } = default;
+            [Required]
             public IEnumerable<DeletionDto> Deletions { get; set; } = Array.Empty<DeletionDto>();
             public class DeletionDto
             {
+                [Required]
                 public string Email { get; set; } = string.Empty;
+                [Required]
                 public uint Counted { get; set; } = default;
+                [Required]
                 public uint Ignored { get; set; } = default;
             }
         }
 
-        private string ToJsonArray(IEnumerable<Entity> entities)
+        private string ToJsonArray(IEnumerable<DevRating.Domain.Entity> entities)
         {
             var builder = new StringBuilder("[");
 

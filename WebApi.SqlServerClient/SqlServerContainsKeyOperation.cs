@@ -26,5 +26,19 @@ namespace DevRating.WebApi.SqlServerClient
 
             return reader.Read();
         }
+
+        public bool Contains(Id organization, string value)
+        {
+            using var command = _connection.CreateCommand();
+
+            command.CommandText = "SELECT Id FROM Key WHERE OrganizationId = @OrganizationId AND Value = @Value";
+
+            command.Parameters.Add(new SqlParameter("@OrganizationId", SqlDbType.Int) {Value = organization.Value()});
+            command.Parameters.Add(new SqlParameter("@Value", SqlDbType.NVarChar) {Value = value});
+
+            using var reader = command.ExecuteReader();
+
+            return reader.Read();
+        }
     }
 }
