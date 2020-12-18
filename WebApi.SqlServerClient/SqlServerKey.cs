@@ -1,5 +1,6 @@
 using System;
 using System.Data;
+using System.Text.Json;
 using DevRating.Domain;
 using DevRating.WebApi.Domain;
 using Microsoft.Data.SqlClient;
@@ -71,7 +72,36 @@ namespace DevRating.WebApi.SqlServerClient
 
         public string ToJson()
         {
-            throw new NotImplementedException();
+            using var command = _connection.CreateCommand();
+
+            command.CommandText = @"
+                SELECT
+                    k.Id, 
+                    k.CreatedAt, 
+                    k.RevokedAt, 
+                    k.OrganizationId,
+                    o.Name
+                FROM Key
+                INNER JOIN Organization o on k.OrganizationId = o.Id
+                WHERE Id = @Id
+            ";
+
+            command.Parameters.Add(new SqlParameter("@Id", SqlDbType.Int) { Value = _id.Value() });
+
+            using var reader = command.ExecuteReader();
+
+            reader.Read();
+
+            return JsonSerializer.Serialize<Dto>(
+                new Dto
+                {
+                    Id = reader["Id"],
+                    Organization = (string) reader["Name"],
+                    OrganizationId = reader["OrganizationId"],
+                    CreatedAt = (DateTimeOffset) reader["CreatedAt"],
+                    RevokedAt = reader["RevokedAt"] == DBNull.Value ? null : (DateTimeOffset?) reader["RevokedAt"]
+                }
+            );
         }
 
         public string Value()
@@ -87,6 +117,15 @@ namespace DevRating.WebApi.SqlServerClient
             reader.Read();
 
             return (string)reader["Value"];
+        }
+
+        private sealed class Dto
+        {
+            public object Id { get; set; } = new object();
+            public string Organization { get; set; } = string.Empty;
+            public object OrganizationId { get; set; } = new object();
+            public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.MinValue;
+            public DateTimeOffset? RevokedAt { get; set; } = default;
         }
     }
 }

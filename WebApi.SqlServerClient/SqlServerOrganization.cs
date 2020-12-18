@@ -1,5 +1,6 @@
 using System;
 using System.Data;
+using System.Text.Json;
 using DevRating.Domain;
 using DevRating.WebApi.Domain;
 using Microsoft.Data.SqlClient;
@@ -54,7 +55,38 @@ namespace DevRating.WebApi.SqlServerClient
 
         public string ToJson()
         {
-            throw new NotImplementedException();
+            using var command = _connection.CreateCommand();
+
+            command.CommandText = @"
+                SELECT
+                    Id, 
+                    CreatedAt, 
+                    Name
+                FROM Organization
+                WHERE Id = @Id
+            ";
+
+            command.Parameters.Add(new SqlParameter("@Id", SqlDbType.Int) { Value = _id.Value() });
+
+            using var reader = command.ExecuteReader();
+
+            reader.Read();
+
+            return JsonSerializer.Serialize<Dto>(
+                new Dto
+                {
+                    Id = reader["Id"],
+                    Name = (string) reader["Name"],
+                    CreatedAt = (DateTimeOffset) reader["CreatedAt"]
+                }
+            );
+        }
+
+        private sealed class Dto
+        {
+            public object Id { get; set; } = new object();
+            public string Name { get; set; } = string.Empty;
+            public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.MinValue;
         }
 
         public string User()
