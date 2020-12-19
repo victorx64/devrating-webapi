@@ -22,7 +22,7 @@ namespace DevRating.WebApi.SqlServerClient
         {
             using var command = _connection.CreateCommand();
 
-            command.CommandText = "SELECT CreatedAt FROM Key WHERE Id = @Id";
+            command.CommandText = "SELECT CreatedAt FROM [Key] WHERE Id = @Id";
 
             command.Parameters.Add(new SqlParameter("@Id", SqlDbType.Int) { Value = _id.Value() });
 
@@ -42,7 +42,7 @@ namespace DevRating.WebApi.SqlServerClient
         {
             using var command = _connection.CreateCommand();
 
-            command.CommandText = "SELECT OrganizationId FROM Key WHERE Id = @Id";
+            command.CommandText = "SELECT OrganizationId FROM [Key] WHERE Id = @Id";
 
             command.Parameters.Add(new SqlParameter("@Id", SqlDbType.Int) { Value = _id.Value() });
 
@@ -57,7 +57,7 @@ namespace DevRating.WebApi.SqlServerClient
         {
             using var command = _connection.CreateCommand();
 
-            command.CommandText = "SELECT RevokedAt FROM Key WHERE Id = @Id";
+            command.CommandText = "SELECT RevokedAt FROM [Key] WHERE Id = @Id";
 
             command.Parameters.Add(new SqlParameter("@Id", SqlDbType.Int) { Value = _id.Value() });
 
@@ -81,7 +81,7 @@ namespace DevRating.WebApi.SqlServerClient
                     k.RevokedAt, 
                     k.OrganizationId,
                     o.Name
-                FROM Key
+                FROM [Key]
                 INNER JOIN Organization o on k.OrganizationId = o.Id
                 WHERE Id = @Id
             ";
@@ -108,7 +108,7 @@ namespace DevRating.WebApi.SqlServerClient
         {
             using var command = _connection.CreateCommand();
 
-            command.CommandText = "SELECT Value FROM Key WHERE Id = @Id";
+            command.CommandText = "SELECT Value FROM [Key] WHERE Id = @Id";
 
             command.Parameters.Add(new SqlParameter("@Id", SqlDbType.Int) { Value = _id.Value() });
 

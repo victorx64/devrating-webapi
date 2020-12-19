@@ -21,7 +21,7 @@ namespace DevRating.WebApi.SqlServerClient
             using var command = _connection.CreateCommand();
 
             command.CommandText = @"
-                INSERT INTO Key
+                INSERT INTO [Key]
                     (Value, OrganizationId, CreatedAt)
                 OUTPUT Inserted.Id
                 VALUES
@@ -39,7 +39,7 @@ namespace DevRating.WebApi.SqlServerClient
             using var command = _connection.CreateCommand();
 
             command.CommandText = @"
-                UPDATE Key
+                UPDATE [Key]
                 SET
                     RevokedAt = @RevokedAt
                 OUTPUT Inserted.Id

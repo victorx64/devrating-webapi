@@ -18,7 +18,7 @@ namespace DevRating.WebApi.SqlServerClient
         {
             using var command = _connection.CreateCommand();
 
-            command.CommandText = "SELECT Id FROM Key WHERE Id = @Id";
+            command.CommandText = "SELECT Id FROM [Key] WHERE Id = @Id";
 
             command.Parameters.Add(new SqlParameter("@Id", SqlDbType.Int) {Value = id.Value()});
 
@@ -31,7 +31,7 @@ namespace DevRating.WebApi.SqlServerClient
         {
             using var command = _connection.CreateCommand();
 
-            command.CommandText = "SELECT Id FROM Key WHERE OrganizationId = @OrganizationId AND Value = @Value";
+            command.CommandText = "SELECT Id FROM [Key] WHERE OrganizationId = @OrganizationId AND Value = @Value";
 
             command.Parameters.Add(new SqlParameter("@OrganizationId", SqlDbType.Int) {Value = organization.Value()});
             command.Parameters.Add(new SqlParameter("@Value", SqlDbType.NVarChar) {Value = value});

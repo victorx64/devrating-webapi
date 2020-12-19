@@ -51,7 +51,7 @@ namespace DevRating.WebApi.Controllers
             }
         }
 
-        [HttpGet("repository/{repository}")]
+        [HttpGet("repositories/{repository}")]
         public IActionResult GetByRepository(string repository)
         {
             _db.Instance().Connection().Open();
@@ -74,7 +74,7 @@ namespace DevRating.WebApi.Controllers
             }
         }
 
-        [HttpGet("repository/{repository}/{after}")]
+        [HttpGet("repositories/{repository}/{after}")]
         public IActionResult GetByRepository(string repository, DateTimeOffset after)
         {
             _db.Instance().Connection().Open();

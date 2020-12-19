@@ -30,7 +30,7 @@ namespace DevRating.WebApi.SqlServerClient
                         unique (Name)
                 );
 
-                create table Key
+                create table [Key]
                 (
                     Id int identity
                         constraint PK_Key
