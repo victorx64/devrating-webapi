@@ -91,35 +91,6 @@ namespace DevRating.WebApi.Controllers
             }
         }
 
-        [HttpPost("{key}")]
-        public IActionResult Post(string key, Dto diff)
-        {
-            _webDb.Instance().Connection().Open();
-
-            try
-            {
-                if (_webDb.Entities().Organizations().ContainsOperation().Contains(diff.Organization))
-                {
-                    var org = _webDb.Entities().Organizations().GetOperation().Organization(diff.Organization).Id();
-
-                    if (!_webDb.Entities().Keys().ContainsOperation().Contains(org, key))
-                    {
-                        return new UnauthorizedObjectResult("Key not found");
-                    }
-                }
-                else
-                {
-                    return new BadRequestObjectResult("Organization not found");
-                }
-            }
-            finally
-            {
-                _webDb.Instance().Connection().Close();
-            }
-
-            return Post(diff);
-        }
-
         public sealed class Dto
         {
             [Required]
@@ -147,6 +118,35 @@ namespace DevRating.WebApi.Controllers
                 [Required]
                 public uint Ignored { get; set; } = default;
             }
+        }
+
+        [HttpPost("{key}")]
+        public IActionResult Post(string key, Dto diff)
+        {
+            _webDb.Instance().Connection().Open();
+
+            try
+            {
+                if (_webDb.Entities().Organizations().ContainsOperation().Contains(diff.Organization))
+                {
+                    var org = _webDb.Entities().Organizations().GetOperation().Organization(diff.Organization).Id();
+
+                    if (!_webDb.Entities().Keys().ContainsOperation().Contains(org, key))
+                    {
+                        return new UnauthorizedObjectResult("Key not found");
+                    }
+                }
+                else
+                {
+                    return new BadRequestObjectResult("Organization not found");
+                }
+            }
+            finally
+            {
+                _webDb.Instance().Connection().Close();
+            }
+
+            return Post(diff);
         }
 
         private string ToJsonArray(IEnumerable<DevRating.Domain.Entity> entities)

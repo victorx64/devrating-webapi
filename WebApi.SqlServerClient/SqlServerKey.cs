@@ -96,12 +96,27 @@ namespace DevRating.WebApi.SqlServerClient
                 new Dto
                 {
                     Id = reader["Id"],
-                    Organization = (string) reader["Name"],
+                    Organization = (string)reader["Name"],
                     OrganizationId = reader["OrganizationId"],
-                    CreatedAt = (DateTimeOffset) reader["CreatedAt"],
-                    RevokedAt = reader["RevokedAt"] == DBNull.Value ? null : (DateTimeOffset?) reader["RevokedAt"]
+                    CreatedAt = (DateTimeOffset)reader["CreatedAt"],
+                    RevokedAt = reader["RevokedAt"] == DBNull.Value ? null : (DateTimeOffset?)reader["RevokedAt"]
                 }
             );
+        }
+
+        public string? Name()
+        {
+            using var command = _connection.CreateCommand();
+
+            command.CommandText = "SELECT Name FROM [Key] WHERE Id = @Id";
+
+            command.Parameters.Add(new SqlParameter("@Id", SqlDbType.Int) { Value = _id.Value() });
+
+            using var reader = command.ExecuteReader();
+
+            reader.Read();
+
+            return reader["Name"] == DBNull.Value ? null : (string)reader["Name"];
         }
 
         public string Value()

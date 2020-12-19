@@ -7,6 +7,6 @@ namespace DevRating.WebApi.Domain
     {
         Organization Organization(Id id);
         Organization Organization(string name);
-        IEnumerable<Organization> OrganizationsByUser(string user);
+        IEnumerable<Organization> SubjectOrganizations(string subject);
     }
 }

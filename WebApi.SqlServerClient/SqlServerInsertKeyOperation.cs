@@ -16,20 +16,21 @@ namespace DevRating.WebApi.SqlServerClient
             _connection = connection;
         }
 
-        public Key Insert(string value, Id organization, DateTimeOffset createdAt)
+        public Key Insert(string? name, string value, Id organization, DateTimeOffset createdAt)
         {
             using var command = _connection.CreateCommand();
 
             command.CommandText = @"
                 INSERT INTO [Key]
-                    (Value, OrganizationId, CreatedAt)
+                    (Name, Value, OrganizationId, CreatedAt)
                 OUTPUT Inserted.Id
                 VALUES
-                    (@Value, @OrganizationId, @CreatedAt)";
+                    (@Name, @Value, @OrganizationId, @CreatedAt)";
 
-            command.Parameters.Add(new SqlParameter("@Value", SqlDbType.NVarChar, 256) {Value = value});
-            command.Parameters.Add(new SqlParameter("@OrganizationId", SqlDbType.Int) {Value = organization.Value()});
-            command.Parameters.Add(new SqlParameter("@CreatedAt", SqlDbType.DateTimeOffset) {Value = createdAt});
+            command.Parameters.Add(new SqlParameter("@Name", SqlDbType.NVarChar, 256) { Value = name });
+            command.Parameters.Add(new SqlParameter("@Value", SqlDbType.NVarChar, 256) { Value = value });
+            command.Parameters.Add(new SqlParameter("@OrganizationId", SqlDbType.Int) { Value = organization.Value() });
+            command.Parameters.Add(new SqlParameter("@CreatedAt", SqlDbType.DateTimeOffset) { Value = createdAt });
 
             return new SqlServerKey(_connection, new DefaultId(command.ExecuteScalar()!));
         }
@@ -46,8 +47,8 @@ namespace DevRating.WebApi.SqlServerClient
                 WHERE
                     Id = @Id";
 
-            command.Parameters.Add(new SqlParameter("@Id", SqlDbType.Int) {Value = id.Value()});
-            command.Parameters.Add(new SqlParameter("@RevokedAt", SqlDbType.DateTimeOffset) {Value = revokedAt});
+            command.Parameters.Add(new SqlParameter("@Id", SqlDbType.Int) { Value = id.Value() });
+            command.Parameters.Add(new SqlParameter("@RevokedAt", SqlDbType.DateTimeOffset) { Value = revokedAt });
 
             return new SqlServerKey(_connection, new DefaultId(command.ExecuteScalar()!));
         }

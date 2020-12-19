@@ -103,7 +103,7 @@ namespace DevRating.WebApi.Controllers
                 return new OkObjectResult(
                     ToJsonArray(
                         _db.Entities().Authors().GetOperation()
-                        .TopOfRepository(HttpUtility.UrlDecode(repository))
+                        .TopOfRepository(repository)
                     )
                 );
             }

@@ -4,6 +4,6 @@ namespace DevRating.WebApi.Domain
 {
     public interface InsertOrganizationOperation
     {
-        Organization Insert(string name, string user, DateTimeOffset createdAt);
+        Organization Insert(string name, string subject, DateTimeOffset createdAt);
     }
 }

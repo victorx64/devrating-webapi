@@ -89,11 +89,11 @@ namespace DevRating.WebApi.SqlServerClient
             public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.MinValue;
         }
 
-        public string User()
+        public string AuthorizedSubject()
         {
             using var command = _connection.CreateCommand();
 
-            command.CommandText = "SELECT UserId FROM Organization WHERE Id = @Id";
+            command.CommandText = "SELECT AuthorizedSubject FROM Organization WHERE Id = @Id";
 
             command.Parameters.Add(new SqlParameter("@Id", SqlDbType.Int) {Value = _id.Value()});
 
@@ -101,7 +101,7 @@ namespace DevRating.WebApi.SqlServerClient
 
             reader.Read();
 
-            return (string) reader["UserId"];
+            return (string) reader["AuthorizedSubject"];
         }
     }
 }

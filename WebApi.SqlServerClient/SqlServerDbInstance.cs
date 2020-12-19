@@ -25,7 +25,7 @@ namespace DevRating.WebApi.SqlServerClient
                             primary key,
                     CreatedAt datetimeoffset(7) not null,
                     Name nvarchar(256) not null,
-                    UserId nvarchar(max) not null,
+                    AuthorizedSubject nvarchar(max) not null,
                     constraint UK_Organization_Name
                         unique (Name)
                 );
@@ -37,6 +37,7 @@ namespace DevRating.WebApi.SqlServerClient
                             primary key,
                     CreatedAt datetimeoffset(7) not null,
                     RevokedAt datetimeoffset(7),
+                    Name nvarchar(256),
                     Value nvarchar(256) not null,
                     OrganizationId int not null
                         constraint FK_Key_OrganizationId

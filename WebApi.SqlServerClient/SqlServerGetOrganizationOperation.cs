@@ -36,13 +36,13 @@ namespace DevRating.WebApi.SqlServerClient
             return new SqlServerOrganization(_connection, new DefaultId(reader["Id"]));
         }
 
-        public IEnumerable<Organization> OrganizationsByUser(string user)
+        public IEnumerable<Organization> SubjectOrganizations(string subject)
         {
             using var command = _connection.CreateCommand();
 
-            command.CommandText = "SELECT Id FROM Organization WHERE UserId = @UserId";
+            command.CommandText = "SELECT Id FROM Organization WHERE AuthorizedSubject = @AuthorizedSubject";
 
-            command.Parameters.Add(new SqlParameter("@UserId", SqlDbType.NVarChar) { Value = user });
+            command.Parameters.Add(new SqlParameter("@AuthorizedSubject", SqlDbType.NVarChar) { Value = subject });
 
             using var reader = command.ExecuteReader();
 

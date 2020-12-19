@@ -15,18 +15,18 @@ namespace DevRating.WebApi.SqlServerClient
             _connection = connection;
         }
 
-        public Organization Insert(string name, string user, DateTimeOffset createdAt)
+        public Organization Insert(string name, string subject, DateTimeOffset createdAt)
         {
             using var command = _connection.CreateCommand();
 
             command.CommandText = @"
                 INSERT INTO Organization
-                    (UserId, Name, CreatedAt)
+                    (AuthorizedSubject, Name, CreatedAt)
                 OUTPUT Inserted.Id
                 VALUES
-                    (@UserId, @Name, @CreatedAt)";
+                    (@AuthorizedSubject, @Name, @CreatedAt)";
 
-            command.Parameters.Add(new SqlParameter("@UserId", SqlDbType.NVarChar) {Value = user});
+            command.Parameters.Add(new SqlParameter("@AuthorizedSubject", SqlDbType.NVarChar) {Value = subject});
             command.Parameters.Add(new SqlParameter("@Name", SqlDbType.NVarChar, 256) {Value = name});
             command.Parameters.Add(new SqlParameter("@CreatedAt", SqlDbType.DateTimeOffset) {Value = createdAt});
 

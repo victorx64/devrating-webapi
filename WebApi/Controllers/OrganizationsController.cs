@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using DevRating.DefaultObject;
 using DevRating.WebApi.Domain;
@@ -61,11 +62,11 @@ namespace DevRating.WebApi.Controllers
 
             try
             {
-                var user = User!.Claims!.First(c => c.Type.Equals("user_id")).Value;
+                var subject = User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
 
                 return new OkObjectResult(
                     ToJsonArray(
-                        _db.Entities().Organizations().GetOperation().OrganizationsByUser(user)
+                        _db.Entities().Organizations().GetOperation().SubjectOrganizations(subject)
                     )
                 );
             }
@@ -83,10 +84,10 @@ namespace DevRating.WebApi.Controllers
 
             try
             {
-                var user = User!.Claims!.First(c => c.Type.Equals("user_id")).Value;
+                var subject = User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
 
                 return new OkObjectResult(
-                    _db.Entities().Organizations().InsertOperation().Insert(name, user, DateTimeOffset.UtcNow).ToJson()
+                    _db.Entities().Organizations().InsertOperation().Insert(name, subject, DateTimeOffset.UtcNow).ToJson()
                 );
             }
             finally

@@ -51,6 +51,29 @@ namespace DevRating.WebApi.Controllers
             }
         }
 
+        [HttpGet("organizations/{organization}")]
+        public IActionResult GetByOrganization(string organization)
+        {
+            _db.Instance().Connection().Open();
+
+            try
+            {
+                return new OkObjectResult(
+                    ToJsonArray(
+                        _db.Entities().Works().GetOperation()
+                            .LastOfOrganization(
+                                organization,
+                                DateTimeOffset.MinValue
+                            )
+                    )
+                );
+            }
+            finally
+            {
+                _db.Instance().Connection().Close();
+            }
+        }
+
         [HttpGet("repositories/{repository}")]
         public IActionResult GetByRepository(string repository)
         {
@@ -62,7 +85,7 @@ namespace DevRating.WebApi.Controllers
                     ToJsonArray(
                         _db.Entities().Works().GetOperation()
                             .Last(
-                                HttpUtility.UrlDecode(repository),
+                                repository,
                                 DateTimeOffset.MinValue
                             )
                     )
@@ -85,7 +108,7 @@ namespace DevRating.WebApi.Controllers
                     ToJsonArray(
                         _db.Entities().Works().GetOperation()
                             .Last(
-                                HttpUtility.UrlDecode(repository),
+                                repository,
                                 after
                             )
                     )
