@@ -65,7 +65,7 @@ namespace DevRating.WebApi.Controllers
             }
         }
 
-        public sealed class Dto
+        public sealed class Key
         {
             public string? Name { get; set; } = default;
             [Required]
@@ -74,7 +74,7 @@ namespace DevRating.WebApi.Controllers
 
         [Authorize]
         [HttpPost("{organization}")]
-        public IActionResult Post(string organization, Dto key)
+        public IActionResult Post(string organization, Key key)
         {
             _db.Instance().Connection().Open();
 

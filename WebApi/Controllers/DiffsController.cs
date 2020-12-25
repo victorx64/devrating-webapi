@@ -41,9 +41,38 @@ namespace DevRating.WebApi.Controllers
             _webDb = webDb;
         }
 
+        public sealed class Diff
+        {
+            [Required]
+            public string Email { get; set; } = string.Empty;
+            [Required]
+            public string Start { get; set; } = string.Empty;
+            [Required]
+            public string End { get; set; } = string.Empty;
+            [Required]
+            public string Organization { get; set; } = string.Empty;
+            public string? Since { get; set; } = default;
+            [Required]
+            public string Repository { get; set; } = string.Empty;
+            public string? Link { get; set; } = default;
+            [Required]
+            public uint Additions { get; set; } = default;
+            [Required]
+            public IEnumerable<Deletion> Deletions { get; set; } = Array.Empty<Deletion>();
+            public class Deletion
+            {
+                [Required]
+                public string Email { get; set; } = string.Empty;
+                [Required]
+                public uint Counted { get; set; } = default;
+                [Required]
+                public uint Ignored { get; set; } = default;
+            }
+        }
+
         [Authorize]
         [HttpPost]
-        public IActionResult Post(Dto diff)
+        public IActionResult Post(Diff diff)
         {
             _domainDb.Instance().Connection().Open();
 
@@ -91,37 +120,8 @@ namespace DevRating.WebApi.Controllers
             }
         }
 
-        public sealed class Dto
-        {
-            [Required]
-            public string Email { get; set; } = string.Empty;
-            [Required]
-            public string Start { get; set; } = string.Empty;
-            [Required]
-            public string End { get; set; } = string.Empty;
-            [Required]
-            public string Organization { get; set; } = string.Empty;
-            public string? Since { get; set; } = default;
-            [Required]
-            public string Repository { get; set; } = string.Empty;
-            public string? Link { get; set; } = default;
-            [Required]
-            public uint Additions { get; set; } = default;
-            [Required]
-            public IEnumerable<DeletionDto> Deletions { get; set; } = Array.Empty<DeletionDto>();
-            public class DeletionDto
-            {
-                [Required]
-                public string Email { get; set; } = string.Empty;
-                [Required]
-                public uint Counted { get; set; } = default;
-                [Required]
-                public uint Ignored { get; set; } = default;
-            }
-        }
-
         [HttpPost("{key}")]
-        public IActionResult Post(string key, Dto diff)
+        public IActionResult Post(string key, Diff diff)
         {
             _webDb.Instance().Connection().Open();
 

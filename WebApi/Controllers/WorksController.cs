@@ -74,6 +74,29 @@ namespace DevRating.WebApi.Controllers
             }
         }
 
+        [HttpGet("organizations/{organization}/{after}")]
+        public IActionResult GetByOrganization(string organization, DateTimeOffset after)
+        {
+            _db.Instance().Connection().Open();
+
+            try
+            {
+                return new OkObjectResult(
+                    ToJsonArray(
+                        _db.Entities().Works().GetOperation()
+                            .LastOfOrganization(
+                                organization,
+                                after
+                            )
+                    )
+                );
+            }
+            finally
+            {
+                _db.Instance().Connection().Close();
+            }
+        }
+
         [HttpGet("repositories/{repository}")]
         public IActionResult GetByRepository(string repository)
         {

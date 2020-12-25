@@ -80,10 +80,11 @@ namespace DevRating.WebApi.SqlServerClient
                     k.CreatedAt, 
                     k.RevokedAt, 
                     k.OrganizationId,
+                    k.Name,
                     o.Name
-                FROM [Key]
+                FROM [Key] k
                 INNER JOIN Organization o on k.OrganizationId = o.Id
-                WHERE Id = @Id
+                WHERE k.Id = @Id
             ";
 
             command.Parameters.Add(new SqlParameter("@Id", SqlDbType.Int) { Value = _id.Value() });
@@ -97,6 +98,7 @@ namespace DevRating.WebApi.SqlServerClient
                 {
                     Id = reader["Id"],
                     Organization = (string)reader["Name"],
+                    Name = reader["Name"] == DBNull.Value ? null : (string)reader["Name"],
                     OrganizationId = reader["OrganizationId"],
                     CreatedAt = (DateTimeOffset)reader["CreatedAt"],
                     RevokedAt = reader["RevokedAt"] == DBNull.Value ? null : (DateTimeOffset?)reader["RevokedAt"]
@@ -137,6 +139,7 @@ namespace DevRating.WebApi.SqlServerClient
         private sealed class Dto
         {
             public object Id { get; set; } = new object();
+            public string? Name { get; set; } = default;
             public string Organization { get; set; } = string.Empty;
             public object OrganizationId { get; set; } = new object();
             public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.MinValue;
