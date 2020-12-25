@@ -24,8 +24,16 @@ namespace DevRating.WebApi.Controllers
         public DiffsController(ILogger<DiffsController> log, IConfiguration configuration)
             : this (
                 log,
-                new DevRating.SqlServerClient.SqlServerDatabase(new SqlConnection(configuration["ConnectionString"])),
-                new DevRating.WebApi.SqlServerClient.SqlServerDatabase(new SqlConnection(configuration["ConnectionString"]))
+                new DevRating.SqlServerClient.SqlServerDatabase(
+                    new TransactedDbConnection(
+                        new SqlConnection(configuration["ConnectionString"])
+                    )
+                ),
+                new DevRating.WebApi.SqlServerClient.SqlServerDatabase(
+                    new TransactedDbConnection(
+                        new SqlConnection(configuration["ConnectionString"])
+                    )
+                )
             )
         {
         }
