@@ -166,7 +166,8 @@ namespace DevRating.SqlServerClient.Test
                 );
 
                 Assert.Equal(author1.Id(),
-                    database.Entities().Authors().GetOperation().TopOfOrganization(organization).First().Id());
+                    database.Entities().Authors().GetOperation()
+                    .TopOfOrganization(organization, createdAt - TimeSpan.FromDays(1)).First().Id());
             }
             finally
             {
@@ -246,7 +247,8 @@ namespace DevRating.SqlServerClient.Test
                     createdAt
                 );
 
-                Assert.Equal(2, database.Entities().Authors().GetOperation().TopOfRepository(repository).Count());
+                Assert.Equal(2, database.Entities().Authors().GetOperation()
+                .TopOfRepository(repository, createdAt - TimeSpan.FromDays(1)).Count());
             }
             finally
             {

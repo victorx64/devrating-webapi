@@ -22,8 +22,8 @@ namespace DevRating.SqlServerClient
 
             command.CommandText = "SELECT Id FROM Author WHERE Email = @Email AND Organization = @Organization";
 
-            command.Parameters.Add(new SqlParameter("@Email", SqlDbType.NVarChar, 256) {Value = email});
-            command.Parameters.Add(new SqlParameter("@Organization", SqlDbType.NVarChar, 256) {Value = organization});
+            command.Parameters.Add(new SqlParameter("@Email", SqlDbType.NVarChar, 256) { Value = email });
+            command.Parameters.Add(new SqlParameter("@Organization", SqlDbType.NVarChar, 256) { Value = organization });
 
             using var reader = command.ExecuteReader();
 
@@ -37,7 +37,7 @@ namespace DevRating.SqlServerClient
             return new SqlServerAuthor(_connection, id);
         }
 
-        public IEnumerable<Author> TopOfOrganization(string organization)
+        public IEnumerable<Author> TopOfOrganization(string organization, DateTimeOffset after)
         {
             using var command = _connection.CreateCommand();
 
@@ -50,13 +50,8 @@ namespace DevRating.SqlServerClient
                 AND r2.Id IS NULL
                 ORDER BY r1.Rating DESC";
 
-            command.Parameters.Add(new SqlParameter("@Organization", SqlDbType.NVarChar, 256) {Value = organization});
-            command.Parameters.Add(
-                new SqlParameter("@After", SqlDbType.DateTimeOffset)
-                {
-                    Value = DateTimeOffset.Now - TimeSpan.FromDays(90)
-                }
-            );
+            command.Parameters.Add(new SqlParameter("@Organization", SqlDbType.NVarChar, 256) { Value = organization });
+            command.Parameters.Add(new SqlParameter("@After", SqlDbType.DateTimeOffset) { Value = after });
 
             using var reader = command.ExecuteReader();
 
@@ -70,7 +65,7 @@ namespace DevRating.SqlServerClient
             return authors;
         }
 
-        public IEnumerable<Author> TopOfRepository(string repository)
+        public IEnumerable<Author> TopOfRepository(string repository, DateTimeOffset after)
         {
             using var command = _connection.CreateCommand();
 
@@ -91,7 +86,7 @@ namespace DevRating.SqlServerClient
                                 AND w2.Repository = @Repository))
                 ORDER BY r1.Rating DESC";
 
-            command.Parameters.Add(new SqlParameter("@Repository", SqlDbType.NVarChar) {Value = repository});
+            command.Parameters.Add(new SqlParameter("@Repository", SqlDbType.NVarChar) { Value = repository });
 
             using var reader = command.ExecuteReader();
 

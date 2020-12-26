@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Web;
 using DevRating.DefaultObject;
 using DevRating.Domain;
 using DevRating.SqlServerClient;
@@ -52,8 +52,8 @@ namespace DevRating.WebApi.Controllers
             }
         }
 
-        [HttpGet("organizations/{organization}")]
-        public IActionResult GetByOrganization(string organization)
+        [HttpGet("organizations/{organization}/{after}")]
+        public IActionResult GetByOrganization(string organization, DateTimeOffset after)
         {
             _db.Instance().Connection().Open();
 
@@ -61,7 +61,7 @@ namespace DevRating.WebApi.Controllers
             {
                 return new OkObjectResult(
                     ToJsonArray(
-                        _db.Entities().Authors().GetOperation().TopOfOrganization(organization)
+                        _db.Entities().Authors().GetOperation().TopOfOrganization(organization, after)
                     )
                 );
             }
@@ -71,7 +71,7 @@ namespace DevRating.WebApi.Controllers
             }
         }
 
-        [HttpGet("organizations/{organization}/{email}")]
+        [HttpGet("{organization}/{email}")]
         public IActionResult GetByOrganizationAndEmail(string organization, string email)
         {
             _db.Instance().Connection().Open();
@@ -93,8 +93,8 @@ namespace DevRating.WebApi.Controllers
             }
         }
 
-        [HttpGet("repositories/{repository}")]
-        public IActionResult GetByRepository(string repository)
+        [HttpGet("repositories/{repository}/{after}")]
+        public IActionResult GetByRepository(string repository, DateTimeOffset after)
         {
             _db.Instance().Connection().Open();
 
@@ -103,7 +103,7 @@ namespace DevRating.WebApi.Controllers
                 return new OkObjectResult(
                     ToJsonArray(
                         _db.Entities().Authors().GetOperation()
-                        .TopOfRepository(repository)
+                        .TopOfRepository(repository, after)
                     )
                 );
             }
