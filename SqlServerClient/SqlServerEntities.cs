@@ -10,9 +10,11 @@ namespace DevRating.SqlServerClient
         private readonly Authors _authors;
 
         public SqlServerEntities(IDbConnection connection)
-            : this(new SqlServerWorks(connection),
+            : this(
+                new SqlServerWorks(connection),
                 new SqlServerRatings(connection),
-                new SqlServerAuthors(connection))
+                new SqlServerAuthors(connection)
+            )
         {
         }
 

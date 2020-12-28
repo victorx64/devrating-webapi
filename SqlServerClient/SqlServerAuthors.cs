@@ -10,9 +10,11 @@ namespace DevRating.SqlServerClient
         private readonly ContainsAuthorOperation _contains;
 
         public SqlServerAuthors(IDbConnection connection)
-            : this(new SqlServerGetAuthorOperation(connection),
+            : this(
+                new SqlServerGetAuthorOperation(connection),
                 new SqlServerInsertAuthorOperation(connection),
-                new SqlServerContainsAuthorOperation(connection))
+                new SqlServerContainsAuthorOperation(connection)
+            )
         {
         }
 

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Web;
 using DevRating.DefaultObject;
 using DevRating.Domain;
 using DevRating.SqlServerClient;
@@ -51,8 +50,8 @@ namespace DevRating.WebApi.Controllers
             }
         }
 
-        [HttpGet("repository/{repository}")]
-        public IActionResult GetByRepository(string repository)
+        [HttpGet("organizations/{organization}")]
+        public IActionResult GetByOrganization(string organization)
         {
             _db.Instance().Connection().Open();
 
@@ -61,8 +60,8 @@ namespace DevRating.WebApi.Controllers
                 return new OkObjectResult(
                     ToJsonArray(
                         _db.Entities().Works().GetOperation()
-                            .Last(
-                                HttpUtility.UrlDecode(repository),
+                            .LastOfOrganization(
+                                organization,
                                 DateTimeOffset.MinValue
                             )
                     )
@@ -74,7 +73,53 @@ namespace DevRating.WebApi.Controllers
             }
         }
 
-        [HttpGet("repository/{repository}/{after}")]
+        [HttpGet("organizations/{organization}/{after}")]
+        public IActionResult GetByOrganization(string organization, DateTimeOffset after)
+        {
+            _db.Instance().Connection().Open();
+
+            try
+            {
+                return new OkObjectResult(
+                    ToJsonArray(
+                        _db.Entities().Works().GetOperation()
+                            .LastOfOrganization(
+                                organization,
+                                after
+                            )
+                    )
+                );
+            }
+            finally
+            {
+                _db.Instance().Connection().Close();
+            }
+        }
+
+        [HttpGet("repositories/{repository}")]
+        public IActionResult GetByRepository(string repository)
+        {
+            _db.Instance().Connection().Open();
+
+            try
+            {
+                return new OkObjectResult(
+                    ToJsonArray(
+                        _db.Entities().Works().GetOperation()
+                            .Last(
+                                repository,
+                                DateTimeOffset.MinValue
+                            )
+                    )
+                );
+            }
+            finally
+            {
+                _db.Instance().Connection().Close();
+            }
+        }
+
+        [HttpGet("repositories/{repository}/{after}")]
         public IActionResult GetByRepository(string repository, DateTimeOffset after)
         {
             _db.Instance().Connection().Open();
@@ -85,7 +130,7 @@ namespace DevRating.WebApi.Controllers
                     ToJsonArray(
                         _db.Entities().Works().GetOperation()
                             .Last(
-                                HttpUtility.UrlDecode(repository),
+                                repository,
                                 after
                             )
                     )

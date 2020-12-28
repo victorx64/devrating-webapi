@@ -72,11 +72,7 @@ namespace DevRating.SqlServerClient
                             references Rating,
                     constraint UK_Work_Commits
                         unique (StartCommit, EndCommit)
-                );
-
-                alter table Rating
-                    add constraint FK_Rating_WorkId
-                        foreign key (WorkId) references Work;";
+                );";
 
             command.ExecuteNonQuery();
         }

@@ -48,12 +48,38 @@ namespace DevRating.SqlServerClient
             using var command = _connection.CreateCommand();
 
             command.CommandText = @"
-                SELECT TOP (50) w.Id
+                SELECT w.Id
                 FROM Work w
                 WHERE w.Repository = @Repository AND w.CreatedAt >= @After
                 ORDER BY w.Id DESC";
 
             command.Parameters.Add(new SqlParameter("@Repository", SqlDbType.NVarChar) {Value = repository});
+            command.Parameters.Add(new SqlParameter("@After", SqlDbType.DateTimeOffset) {Value = after});
+
+            using var reader = command.ExecuteReader();
+
+            var works = new List<SqlServerWork>();
+
+            while (reader.Read())
+            {
+                works.Add(new SqlServerWork(_connection, new DefaultId(reader["Id"])));
+            }
+
+            return works;
+        }
+
+        public IEnumerable<Work> LastOfOrganization(string organization, DateTimeOffset after)
+        {
+            using var command = _connection.CreateCommand();
+
+            command.CommandText = @"
+                SELECT w.Id
+                FROM Work w
+                INNER JOIN Author a on a.Id = w.AuthorId
+                WHERE a.Organization = @Organization AND w.CreatedAt >= @After
+                ORDER BY w.Id DESC";
+
+            command.Parameters.Add(new SqlParameter("@Organization", SqlDbType.NVarChar) {Value = organization});
             command.Parameters.Add(new SqlParameter("@After", SqlDbType.DateTimeOffset) {Value = after});
 
             using var reader = command.ExecuteReader();

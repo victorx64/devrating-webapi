@@ -10,9 +10,11 @@ namespace DevRating.SqlServerClient
         private readonly ContainsWorkOperation _contains;
 
         public SqlServerWorks(IDbConnection connection)
-            : this(new SqlServerInsertWorkOperation(connection),
+            : this(
+                new SqlServerInsertWorkOperation(connection),
                 new SqlServerGetWorkOperation(connection),
-                new SqlServerContainsWorkOperation(connection))
+                new SqlServerContainsWorkOperation(connection)
+            )
         {
         }
 
