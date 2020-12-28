@@ -8,7 +8,7 @@ else
 endif
 ROOT_DIR:=$(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 
-DOCKER_ADDR="registry.digitalocean.com/devrating"
+DOCKER_ADDR="registry.digitalocean.com/onelinesoft"
 
 build-and-push-drtng: build-and-push-drtng-api
 
