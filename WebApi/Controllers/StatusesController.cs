@@ -40,10 +40,10 @@ namespace DevRating.WebApi.Controllers
             {
                 if (_domainDb.Instance().Present())
                 {
-                    return new OkResult();
+                    return new OkObjectResult(new { message = "Domain DB is present" });
                 }
 
-                return new NotFoundResult();
+                return new OkObjectResult(new { message = "Domain DB is not present" });
             }
             finally
             {
@@ -60,10 +60,10 @@ namespace DevRating.WebApi.Controllers
             {
                 if (_webDb.Instance().Present())
                 {
-                    return new OkResult();
+                    return new OkObjectResult(new { message = "Web DB is present" });
                 }
 
-                return new NotFoundResult();
+                return new OkObjectResult(new { message = "Web DB is not present" });
             }
             finally
             {
