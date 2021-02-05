@@ -19,7 +19,23 @@ namespace DevRating.WebApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddCors();
+            services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(
+                    builder =>
+                    {
+                        builder.WithOrigins("http://localhost:3000",
+                                            "http://localhost:3001",
+                                            "https://localhost:3001",
+                                            "https://localhost:5001",
+                                            "http://localhost:5000",
+                                            "https://devrating.net")
+                                            .AllowAnyHeader()
+                                            .AllowAnyMethod()
+                                            .AllowCredentials();
+                    }
+                );
+            });
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
@@ -41,12 +57,7 @@ namespace DevRating.WebApi
 
             app.UseHttpsRedirection();
             app.UseRouting();
-            app.UseCors(x => x
-                .AllowAnyMethod()
-                .AllowAnyHeader()
-                .SetIsOriginAllowed(origin => true)
-                .AllowCredentials()
-            );
+            app.UseCors();
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseEndpoints(endpoints =>

@@ -39,7 +39,7 @@ namespace DevRating.WebApi.Controllers
             {
                 if (_db.Entities().Works().ContainsOperation().Contains(new DefaultId(id)))
                 {
-                    return new OkObjectResult(_db.Entities().Works().GetOperation().Work(new DefaultId(id)).ToJson());
+                    return new EntityAsJson(_db.Entities().Works().GetOperation().Work(new DefaultId(id)));
                 }
 
                 return new NotFoundResult();
@@ -57,14 +57,12 @@ namespace DevRating.WebApi.Controllers
 
             try
             {
-                return new OkObjectResult(
-                    ToJsonArray(
-                        _db.Entities().Works().GetOperation()
-                            .LastOfOrganization(
-                                organization,
-                                DateTimeOffset.MinValue
-                            )
-                    )
+                return new EntityAsJson(
+                    _db.Entities().Works().GetOperation()
+                        .LastOfOrganization(
+                            organization,
+                            DateTimeOffset.MinValue
+                        )
                 );
             }
             finally
@@ -80,14 +78,12 @@ namespace DevRating.WebApi.Controllers
 
             try
             {
-                return new OkObjectResult(
-                    ToJsonArray(
-                        _db.Entities().Works().GetOperation()
-                            .LastOfOrganization(
-                                organization,
-                                after
-                            )
-                    )
+                return new EntityAsJson(
+                    _db.Entities().Works().GetOperation()
+                        .LastOfOrganization(
+                            organization,
+                            after
+                        )
                 );
             }
             finally
@@ -103,14 +99,12 @@ namespace DevRating.WebApi.Controllers
 
             try
             {
-                return new OkObjectResult(
-                    ToJsonArray(
-                        _db.Entities().Works().GetOperation()
-                            .Last(
-                                repository,
-                                DateTimeOffset.MinValue
-                            )
-                    )
+                return new EntityAsJson(
+                    _db.Entities().Works().GetOperation()
+                        .Last(
+                            repository,
+                            DateTimeOffset.MinValue
+                        )
                 );
             }
             finally
@@ -126,40 +120,18 @@ namespace DevRating.WebApi.Controllers
 
             try
             {
-                return new OkObjectResult(
-                    ToJsonArray(
-                        _db.Entities().Works().GetOperation()
-                            .Last(
-                                repository,
-                                after
-                            )
-                    )
+                return new EntityAsJson(
+                    _db.Entities().Works().GetOperation()
+                        .Last(
+                            repository,
+                            after
+                        )
                 );
             }
             finally
             {
                 _db.Instance().Connection().Close();
             }
-        }
-
-        private string ToJsonArray(IEnumerable<Entity> entities)
-        {
-            var builder = new StringBuilder("[");
-
-            if (entities.Any())
-            {
-                foreach (var author in entities)
-                {
-                    builder.Append(author.ToJson());
-                    builder.Append(",");
-                }
-
-                builder.Remove(builder.Length - 1, 1);
-            }
-
-            builder.Append("]");
-
-            return builder.ToString();
         }
     }
 }

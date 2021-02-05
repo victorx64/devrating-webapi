@@ -114,7 +114,7 @@ namespace DevRating.WebApi.Controllers
 
                 transaction.Commit();
 
-                return new OkObjectResult(work.ToJson());
+                return new EntityAsJson(work);
             }
             catch
             {
@@ -155,26 +155,6 @@ namespace DevRating.WebApi.Controllers
             }
 
             return Post(diff);
-        }
-
-        private string ToJsonArray(IEnumerable<DevRating.Domain.Entity> entities)
-        {
-            var builder = new StringBuilder("[");
-
-            if (entities.Any())
-            {
-                foreach (var author in entities)
-                {
-                    builder.Append(author.ToJson());
-                    builder.Append(",");
-                }
-
-                builder.Remove(builder.Length - 1, 1);
-            }
-
-            builder.Append("]");
-
-            return builder.ToString();
         }
     }
 }

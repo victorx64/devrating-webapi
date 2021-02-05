@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Text;
 using System.Text.Json;
 using DevRating.DefaultObject;
 using DevRating.Domain;
@@ -38,7 +37,7 @@ namespace DevRating.SqlServerClient
                 {
                     var at = _email.IndexOf("@", StringComparison.Ordinal);
 
-                    return _email.Substring(0, at) + "@***";
+                    return _email.Substring(0, at);
                 }
                 set { _email = value; }
             }
@@ -59,7 +58,8 @@ namespace DevRating.SqlServerClient
 
             dto.RatingId = ratings.LastOrDefault()?.Id().Value();
 
-            return JsonSerializer.Serialize<Dto>(dto).Insert(1, "\"ratings\":" + ToJsonArray(ratings) + ",");
+            return JsonSerializer.Serialize<Dto>(dto)
+                .Insert(1, "\"Ratings\":" + new EntitiesCollection(ratings).ToJson() + ",");
         }
 
         private Dto AuthorDataObject()
@@ -153,26 +153,6 @@ namespace DevRating.SqlServerClient
             }
 
             return ratings;
-        }
-
-        private string ToJsonArray(IEnumerable<Entity> entities)
-        {
-            var builder = new StringBuilder("[");
-
-            if (entities.Any())
-            {
-                foreach (var author in entities)
-                {
-                    builder.Append(author.ToJson());
-                    builder.Append(",");
-                }
-
-                builder.Remove(builder.Length - 1, 1);
-            }
-
-            builder.Append("]");
-
-            return builder.ToString();
         }
     }
 }
