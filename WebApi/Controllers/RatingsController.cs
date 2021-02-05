@@ -38,8 +38,7 @@ namespace DevRating.WebApi.Controllers
             {
                 if (_db.Entities().Ratings().ContainsOperation().Contains(new DefaultId(id)))
                 {
-                    return new OkObjectResult(_db.Entities().Ratings().GetOperation().Rating(new DefaultId(id))
-                        .ToJson());
+                    return new EntityAsJson(_db.Entities().Ratings().GetOperation().Rating(new DefaultId(id)));
                 }
 
                 return new NotFoundResult();
@@ -57,36 +56,14 @@ namespace DevRating.WebApi.Controllers
 
             try
             {
-                return new OkObjectResult(
-                    ToJsonArray(
-                        _db.Entities().Ratings().GetOperation().RatingsOf(new DefaultId(work))
-                    )
+                return new EntityAsJson(
+                    _db.Entities().Ratings().GetOperation().RatingsOf(new DefaultId(work))
                 );
             }
             finally
             {
                 _db.Instance().Connection().Close();
             }
-        }
-
-        private string ToJsonArray(IEnumerable<Entity> entities)
-        {
-            var builder = new StringBuilder("[");
-
-            if (entities.Any())
-            {
-                foreach (var author in entities)
-                {
-                    builder.Append(author.ToJson());
-                    builder.Append(",");
-                }
-
-                builder.Remove(builder.Length - 1, 1);
-            }
-
-            builder.Append("]");
-
-            return builder.ToString();
         }
     }
 }

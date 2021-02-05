@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
-using System.Text;
 using DevRating.DefaultObject;
 using DevRating.WebApi.Domain;
 using DevRating.WebApi.SqlServerClient;
@@ -22,7 +19,7 @@ namespace DevRating.WebApi.Controllers
         private readonly Database _db;
 
         public OrganizationsController(ILogger<OrganizationsController> log, IConfiguration configuration)
-            : this (log, new SqlServerDatabase(new SqlConnection(configuration["ConnectionString"])))
+            : this(log, new SqlServerDatabase(new SqlConnection(configuration["ConnectionString"])))
         {
         }
 
@@ -41,8 +38,8 @@ namespace DevRating.WebApi.Controllers
             {
                 if (_db.Entities().Organizations().ContainsOperation().Contains(new DefaultId(id)))
                 {
-                    return new OkObjectResult(
-                        _db.Entities().Organizations().GetOperation().Organization(new DefaultId(id)).ToJson()
+                    return new EntityAsJson(
+                        _db.Entities().Organizations().GetOperation().Organization(new DefaultId(id))
                     );
                 }
 
@@ -64,10 +61,8 @@ namespace DevRating.WebApi.Controllers
             {
                 var subject = User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
 
-                return new OkObjectResult(
-                    ToJsonArray(
-                        _db.Entities().Organizations().GetOperation().SubjectOrganizations(subject)
-                    )
+                return new EntityAsJson(
+                    _db.Entities().Organizations().GetOperation().SubjectOrganizations(subject)
                 );
             }
             finally
@@ -86,34 +81,14 @@ namespace DevRating.WebApi.Controllers
             {
                 var subject = User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
 
-                return new OkObjectResult(
-                    _db.Entities().Organizations().InsertOperation().Insert(name, subject, DateTimeOffset.UtcNow).ToJson()
+                return new EntityAsJson(
+                    _db.Entities().Organizations().InsertOperation().Insert(name, subject, DateTimeOffset.UtcNow)
                 );
             }
             finally
             {
                 _db.Instance().Connection().Close();
             }
-        }
-
-        private string ToJsonArray(IEnumerable<DevRating.Domain.Entity> entities)
-        {
-            var builder = new StringBuilder("[");
-
-            if (entities.Any())
-            {
-                foreach (var author in entities)
-                {
-                    builder.Append(author.ToJson());
-                    builder.Append(",");
-                }
-
-                builder.Remove(builder.Length - 1, 1);
-            }
-
-            builder.Append("]");
-
-            return builder.ToString();
         }
     }
 }

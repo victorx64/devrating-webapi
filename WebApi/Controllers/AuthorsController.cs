@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using DevRating.DefaultObject;
 using DevRating.Domain;
 using DevRating.SqlServerClient;
@@ -39,8 +36,8 @@ namespace DevRating.WebApi.Controllers
             {
                 if (_db.Entities().Authors().ContainsOperation().Contains(new DefaultId(id)))
                 {
-                    return new OkObjectResult(
-                        _db.Entities().Authors().GetOperation().Author(new DefaultId(id)).ToJson()
+                    return new EntityAsJson(
+                        _db.Entities().Authors().GetOperation().Author(new DefaultId(id))
                     );
                 }
 
@@ -59,10 +56,8 @@ namespace DevRating.WebApi.Controllers
 
             try
             {
-                return new OkObjectResult(
-                    ToJsonArray(
-                        _db.Entities().Authors().GetOperation().TopOfOrganization(organization, after)
-                    )
+                return new EntityAsJson(
+                    _db.Entities().Authors().GetOperation().TopOfOrganization(organization, after)
                 );
             }
             finally
@@ -80,8 +75,8 @@ namespace DevRating.WebApi.Controllers
             {
                 if (_db.Entities().Authors().ContainsOperation().Contains(organization, email))
                 {
-                    return new OkObjectResult(
-                        _db.Entities().Authors().GetOperation().Author(organization, email).ToJson()
+                    return new EntityAsJson(
+                        _db.Entities().Authors().GetOperation().Author(organization, email)
                     );
                 }
 
@@ -100,37 +95,15 @@ namespace DevRating.WebApi.Controllers
 
             try
             {
-                return new OkObjectResult(
-                    ToJsonArray(
-                        _db.Entities().Authors().GetOperation()
-                        .TopOfRepository(repository, after)
-                    )
+                return new EntityAsJson(
+                    _db.Entities().Authors().GetOperation()
+                    .TopOfRepository(repository, after)
                 );
             }
             finally
             {
                 _db.Instance().Connection().Close();
             }
-        }
-
-        private string ToJsonArray(IEnumerable<Entity> entities)
-        {
-            var builder = new StringBuilder("[");
-
-            if (entities.Any())
-            {
-                foreach (var author in entities)
-                {
-                    builder.Append(author.ToJson());
-                    builder.Append(",");
-                }
-
-                builder.Remove(builder.Length - 1, 1);
-            }
-
-            builder.Append("]");
-
-            return builder.ToString();
         }
     }
 }

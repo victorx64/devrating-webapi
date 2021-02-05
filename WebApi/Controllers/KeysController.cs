@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using System.Security.Claims;
-using System.Text;
 using DevRating.DefaultObject;
 using DevRating.WebApi.Domain;
 using DevRating.WebApi.SqlServerClient;
@@ -45,13 +42,11 @@ namespace DevRating.WebApi.Controllers
 
                 if (_db.Entities().Organizations().ContainsOperation().Contains(organization, subject))
                 {
-                    return new OkObjectResult(
-                        ToJsonArray(
-                            _db.Entities()
-                                .Keys()
-                                .GetOperation()
-                                .OrganizationKeys(organization)
-                        )
+                    return new EntityAsJson(
+                        _db.Entities()
+                            .Keys()
+                            .GetOperation()
+                            .OrganizationKeys(organization)
                     );
                 }
                 else
@@ -84,7 +79,7 @@ namespace DevRating.WebApi.Controllers
 
                 if (_db.Entities().Organizations().ContainsOperation().Contains(organization, subject))
                 {
-                    return new OkObjectResult(
+                    return new EntityAsJson(
                         _db.Entities()
                             .Keys()
                             .InsertOperation()
@@ -98,7 +93,6 @@ namespace DevRating.WebApi.Controllers
                                     .Id(),
                                 DateTimeOffset.UtcNow
                             )
-                            .ToJson()
                     );
                 }
                 else
@@ -128,12 +122,11 @@ namespace DevRating.WebApi.Controllers
 
                     if (key.Organization().AuthorizedSubject().Equals(subject, StringComparison.Ordinal))
                     {
-                        return new OkObjectResult(
+                        return new EntityAsJson(
                             _db.Entities()
                                 .Keys()
                                 .InsertOperation()
                                 .Revoke(new DefaultId(id), DateTimeOffset.UtcNow)
-                                .ToJson()
                         );
                     }
 
@@ -147,26 +140,6 @@ namespace DevRating.WebApi.Controllers
             {
                 _db.Instance().Connection().Close();
             }
-        }
-
-        private string ToJsonArray(IEnumerable<DevRating.Domain.Entity> entities)
-        {
-            var builder = new StringBuilder("[");
-
-            if (entities.Any())
-            {
-                foreach (var author in entities)
-                {
-                    builder.Append(author.ToJson());
-                    builder.Append(",");
-                }
-
-                builder.Remove(builder.Length - 1, 1);
-            }
-
-            builder.Append("]");
-
-            return builder.ToString();
         }
     }
 }

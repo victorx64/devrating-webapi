@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Text.Json;
 using DevRating.DefaultObject;
@@ -47,7 +48,7 @@ namespace DevRating.SqlServerClient
                 {
                     var at = _email.IndexOf("@", StringComparison.Ordinal);
 
-                    return _email.Substring(0, at) + "@***";
+                    return _email.Substring(0, at);
                 }
                 set { _email = value; }
             }
@@ -55,24 +56,26 @@ namespace DevRating.SqlServerClient
 
         public string ToJson()
         {
+            var ratings = new EntitiesCollection(Ratings()).ToJson();
+
             using var command = _connection.CreateCommand();
 
             command.CommandText = @"
                 SELECT 
-                       Work.Id, 
-                       Repository,
-                       Link,
-                       StartCommit, 
-                       EndCommit,
-                       SinceCommit,
-                       Work.AuthorId, 
-                       UsedRatingId, 
-                       R2.Rating,
-                       Additions,
-                       A.Email,
-                       R3.Id NewRatingId,
-                       R3.Rating NewRating,
-                       Work.CreatedAt
+                    Work.Id,
+                    Repository,
+                    Link,
+                    StartCommit,
+                    EndCommit,
+                    SinceCommit,
+                    Work.AuthorId,
+                    UsedRatingId,
+                    R2.Rating,
+                    Additions,
+                    A.Email,
+                    R3.Id NewRatingId,
+                    R3.Rating NewRating,
+                    Work.CreatedAt
                 FROM Work
                 LEFT JOIN Rating R2 on Work.UsedRatingId = R2.Id
                 INNER JOIN Author A on Work.AuthorId = A.Id
@@ -101,8 +104,9 @@ namespace DevRating.SqlServerClient
                     AuthorEmail = (string) reader["Email"],
                     NewRatingId = reader["NewRatingId"] != DBNull.Value ? reader["NewRatingId"] : null,
                     NewRating = reader["NewRating"] != DBNull.Value ? (float) reader["NewRating"] : (double?) null,
-                    CreatedAt = (DateTimeOffset) reader["CreatedAt"]
-                });
+                    CreatedAt = (DateTimeOffset) reader["CreatedAt"],
+                }
+            ).Insert(1, "\"Ratings\":" + ratings + ",");
         }
 
         public uint Additions()
@@ -218,6 +222,26 @@ namespace DevRating.SqlServerClient
             command.Parameters.Add(new SqlParameter("@Id", SqlDbType.Int) {Value = _id.Value()});
 
             return command.ExecuteScalar() as string;
+        }
+
+        private IEnumerable<Rating> Ratings()
+        {
+            using var command = _connection.CreateCommand();
+
+            command.CommandText = "SELECT Id FROM Rating WHERE WorkId = @WorkId";
+
+            command.Parameters.Add(new SqlParameter("@WorkId", SqlDbType.Int) {Value = _id.Value()});
+
+            using var reader = command.ExecuteReader();
+
+            var ratings = new List<Rating>();
+
+            while (reader.Read())
+            {
+                ratings.Add(new SqlServerRating(_connection, new DefaultId(reader["Id"])));
+            }
+
+            return ratings;
         }
     }
 }

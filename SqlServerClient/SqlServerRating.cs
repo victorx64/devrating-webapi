@@ -32,7 +32,6 @@ namespace DevRating.SqlServerClient
             public object WorkId { get; set; } = new object();
             public object AuthorId { get; set; } = new object();
             public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.MinValue;
-
             private string _email = string.Empty;
 
             public string AuthorEmail
@@ -41,7 +40,7 @@ namespace DevRating.SqlServerClient
                 {
                     var at = _email.IndexOf("@", StringComparison.Ordinal);
 
-                    return _email.Substring(0, at) + "@***";
+                    return _email.Substring(0, at);
                 }
                 set
                 {
@@ -59,16 +58,16 @@ namespace DevRating.SqlServerClient
 
             command.CommandText = @"
                 SELECT 
-                       R1.Id, 
-                       R1.Rating, 
-                       R1.PreviousRatingId, 
-                       R2.Rating PreviousRating,
-                       R1.WorkId, 
-                       R1.AuthorId,
-                       R1.CountedDeletions,
-                       R1.IgnoredDeletions,
-                       A.Email,
-                       R1.CreatedAt
+                    R1.Id, 
+                    R1.Rating, 
+                    R1.PreviousRatingId, 
+                    R2.Rating PreviousRating,
+                    R1.WorkId, 
+                    R1.AuthorId,
+                    R1.CountedDeletions,
+                    R1.IgnoredDeletions,
+                    A.Email,
+                    R1.CreatedAt
                 FROM Rating R1
                 LEFT JOIN Rating R2 ON R1.PreviousRatingId = R2.Id
                 INNER JOIN Author A on R1.AuthorId = A.Id
@@ -99,7 +98,8 @@ namespace DevRating.SqlServerClient
                         : null,
                     AuthorEmail = (string) reader["Email"],
                     CreatedAt = (DateTimeOffset) reader["CreatedAt"]
-                });
+                }
+            );
         }
 
         public Rating PreviousRating()
