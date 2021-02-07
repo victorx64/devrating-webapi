@@ -68,7 +68,7 @@ namespace DevRating.SqlServerClient
 
             command.CommandText = "SELECT Id, Email, Organization, CreatedAt FROM Author WHERE Id = @Id";
 
-            command.Parameters.Add(new SqlParameter("@Id", SqlDbType.Int) {Value = _id.Value()});
+            command.Parameters.Add(new SqlParameter("@Id", SqlDbType.Int) { Value = _id.Value() });
 
             using var reader = command.ExecuteReader();
 
@@ -77,9 +77,9 @@ namespace DevRating.SqlServerClient
             return new Dto
             {
                 Id = reader["Id"],
-                Email = (string) reader["Email"],
-                Organization = (string) reader["Organization"],
-                CreatedAt = (DateTimeOffset) reader["CreatedAt"]
+                Email = (string)reader["Email"],
+                Organization = (string)reader["Organization"],
+                CreatedAt = (DateTimeOffset)reader["CreatedAt"]
             };
         }
 
@@ -89,13 +89,13 @@ namespace DevRating.SqlServerClient
 
             command.CommandText = "SELECT Email FROM Author WHERE Id = @Id";
 
-            command.Parameters.Add(new SqlParameter("@Id", SqlDbType.Int) {Value = _id.Value()});
+            command.Parameters.Add(new SqlParameter("@Id", SqlDbType.Int) { Value = _id.Value() });
 
             using var reader = command.ExecuteReader();
 
             reader.Read();
 
-            return (string) reader["Email"];
+            return (string)reader["Email"];
         }
 
         public string Organization()
@@ -104,13 +104,13 @@ namespace DevRating.SqlServerClient
 
             command.CommandText = "SELECT Organization FROM Author WHERE Id = @Id";
 
-            command.Parameters.Add(new SqlParameter("@Id", SqlDbType.Int) {Value = _id.Value()});
+            command.Parameters.Add(new SqlParameter("@Id", SqlDbType.Int) { Value = _id.Value() });
 
             using var reader = command.ExecuteReader();
 
             reader.Read();
 
-            return (string) reader["Organization"];
+            return (string)reader["Organization"];
         }
 
         public DateTimeOffset CreatedAt()
@@ -119,23 +119,28 @@ namespace DevRating.SqlServerClient
 
             command.CommandText = "SELECT CreatedAt FROM Author WHERE Id = @Id";
 
-            command.Parameters.Add(new SqlParameter("@Id", SqlDbType.Int) {Value = _id.Value()});
+            command.Parameters.Add(new SqlParameter("@Id", SqlDbType.Int) { Value = _id.Value() });
 
             using var reader = command.ExecuteReader();
 
             reader.Read();
 
-            return (DateTimeOffset) reader["CreatedAt"];
+            return (DateTimeOffset)reader["CreatedAt"];
         }
 
         private IEnumerable<Rating> Last90DaysRatings()
         {
             using var command = _connection.CreateCommand();
 
-            command.CommandText =
-                "SELECT Id FROM Rating WHERE AuthorId = @AuthorId AND CreatedAt >= @After ORDER BY Id";
+            command.CommandText = @"
+                SELECT r.Id
+                FROM Rating r
+                INNER JOIN Work w ON w.Id = r.WorkId
+                WHERE r.AuthorId = @AuthorId
+                    AND w.CreatedAt >= @After
+                ORDER BY r.Id";
 
-            command.Parameters.Add(new SqlParameter("@AuthorId", SqlDbType.Int) {Value = _id.Value()});
+            command.Parameters.Add(new SqlParameter("@AuthorId", SqlDbType.Int) { Value = _id.Value() });
             command.Parameters.Add(
                 new SqlParameter("@After", SqlDbType.DateTimeOffset)
                 {
