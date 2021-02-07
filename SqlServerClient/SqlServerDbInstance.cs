@@ -35,7 +35,6 @@ namespace DevRating.SqlServerClient
                     Id int identity
                         constraint PK_Rating
                             primary key,
-                    CreatedAt datetimeoffset(7) not null,
                     Rating real not null,
                     CountedDeletions int,
                     IgnoredDeletions int,

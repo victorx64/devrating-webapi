@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="DevRating.DefaultObject" Version="5.1.0" />
+    <PackageReference Include="DevRating.DefaultObject" Version="6.0.0" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="1.1.1" />
   </ItemGroup>
 

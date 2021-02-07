@@ -31,7 +31,6 @@ namespace DevRating.SqlServerClient
             public double? PreviousRating { get; set; }
             public object WorkId { get; set; } = new object();
             public object AuthorId { get; set; } = new object();
-            public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.MinValue;
             private string _email = string.Empty;
 
             public string AuthorEmail
@@ -66,8 +65,7 @@ namespace DevRating.SqlServerClient
                     R1.AuthorId,
                     R1.CountedDeletions,
                     R1.IgnoredDeletions,
-                    A.Email,
-                    R1.CreatedAt
+                    A.Email
                 FROM Rating R1
                 LEFT JOIN Rating R2 ON R1.PreviousRatingId = R2.Id
                 INNER JOIN Author A on R1.AuthorId = A.Id
@@ -96,8 +94,7 @@ namespace DevRating.SqlServerClient
                     IgnoredDeletions = reader["IgnoredDeletions"] != DBNull.Value
                         ? (uint?) (int) reader["IgnoredDeletions"]
                         : null,
-                    AuthorEmail = (string) reader["Email"],
-                    CreatedAt = (DateTimeOffset) reader["CreatedAt"]
+                    AuthorEmail = (string) reader["Email"]
                 }
             );
         }
@@ -171,17 +168,6 @@ namespace DevRating.SqlServerClient
             reader.Read();
 
             return new SqlServerAuthor(_connection, new DefaultId(reader["AuthorId"]));
-        }
-
-        public DateTimeOffset CreatedAt()
-        {
-            using var command = _connection.CreateCommand();
-
-            command.CommandText = "SELECT CreatedAt FROM Rating WHERE Id = @Id";
-
-            command.Parameters.Add(new SqlParameter("@Id", SqlDbType.Int) {Value = _id.Value()});
-
-            return (DateTimeOffset) command.ExecuteScalar()!;
         }
 
         public double Value()
