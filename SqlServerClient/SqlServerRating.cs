@@ -31,6 +31,7 @@ namespace DevRating.SqlServerClient
             public double? PreviousRating { get; set; }
             public object WorkId { get; set; } = new object();
             public object AuthorId { get; set; } = new object();
+            public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.MinValue;
             private string _email = string.Empty;
 
             public string AuthorEmail
@@ -65,8 +66,10 @@ namespace DevRating.SqlServerClient
                     R1.AuthorId,
                     R1.CountedDeletions,
                     R1.IgnoredDeletions,
-                    A.Email
+                    A.Email,
+                    W.CreatedAt
                 FROM Rating R1
+                INNER JOIN Work W on R1.WorkId = W.Id
                 LEFT JOIN Rating R2 ON R1.PreviousRatingId = R2.Id
                 INNER JOIN Author A on R1.AuthorId = A.Id
                 WHERE R1.Id = @Id";
@@ -94,7 +97,8 @@ namespace DevRating.SqlServerClient
                     IgnoredDeletions = reader["IgnoredDeletions"] != DBNull.Value
                         ? (uint?) (int) reader["IgnoredDeletions"]
                         : null,
-                    AuthorEmail = (string) reader["Email"]
+                    AuthorEmail = (string) reader["Email"],
+                    CreatedAt = (DateTimeOffset) reader["CreatedAt"]
                 }
             );
         }
