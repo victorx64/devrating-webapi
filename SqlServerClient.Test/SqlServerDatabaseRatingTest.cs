@@ -37,9 +37,10 @@ namespace DevRating.SqlServerClient.Test
                             author.Id(),
                             1u,
                             new DefaultId(),
-                            null, createdAt
+                            null,
+                            createdAt
                         ).Id(),
-                        author.Id(), createdAt
+                        author.Id()
                     ).Value()
                 );
             }
@@ -82,8 +83,7 @@ namespace DevRating.SqlServerClient.Test
                             null,
                             createdAt
                         ).Id(),
-                        author.Id(),
-                        createdAt
+                        author.Id()
                     ).Author().Id()
                 );
             }
@@ -126,8 +126,7 @@ namespace DevRating.SqlServerClient.Test
                         null,
                         new DefaultId(),
                         work.Id(),
-                        author.Id(),
-                        createdAt
+                        author.Id()
                     ).Work().Id()
                 );
             }
@@ -170,8 +169,7 @@ namespace DevRating.SqlServerClient.Test
                             null,
                             createdAt
                         ).Id(),
-                        author.Id(),
-                        createdAt
+                        author.Id()
                     )
                     .CountedDeletions()
                 );
@@ -215,8 +213,7 @@ namespace DevRating.SqlServerClient.Test
                             null,
                             createdAt
                         ).Id(),
-                        author.Id(),
-                        createdAt
+                        author.Id()
                     )
                     .IgnoredDeletions()
                 );
@@ -257,8 +254,7 @@ namespace DevRating.SqlServerClient.Test
                         null,
                         createdAt
                     ).Id(),
-                    author.Id(),
-                    createdAt
+                    author.Id()
                 );
 
                 Assert.Equal(
@@ -279,8 +275,7 @@ namespace DevRating.SqlServerClient.Test
                             null,
                             createdAt
                         ).Id(),
-                        author.Id(),
-                        createdAt
+                        author.Id()
                     ).PreviousRating().Id()
                 );
             }
@@ -320,8 +315,7 @@ namespace DevRating.SqlServerClient.Test
                             null,
                             createdAt
                         ).Id(),
-                        author.Id(),
-                        createdAt
+                        author.Id()
                     )
                     .ToJson());
             }

@@ -138,8 +138,7 @@ namespace DevRating.SqlServerClient.Test
                     null,
                     new DefaultId(),
                     work.Id(),
-                    author.Id(),
-                    createdAt
+                    author.Id()
                 );
 
                 Assert.Equal(

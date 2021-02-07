@@ -129,8 +129,7 @@ namespace DevRating.SqlServerClient.Test
                     null,
                     new DefaultId(),
                     work.Id(),
-                    author1.Id(),
-                    createdAt
+                    author1.Id()
                 );
 
                 database.Entities().Ratings().InsertOperation().Insert(
@@ -139,8 +138,7 @@ namespace DevRating.SqlServerClient.Test
                     null,
                     new DefaultId(),
                     work.Id(),
-                    author2.Id(),
-                    createdAt
+                    author2.Id()
                 );
 
                 var work2 = database.Entities().Works().InsertOperation().Insert(
@@ -161,8 +159,7 @@ namespace DevRating.SqlServerClient.Test
                     null,
                     new DefaultId(),
                     work2.Id(),
-                    author3.Id(),
-                    createdAt
+                    author3.Id()
                 );
 
                 Assert.Equal(author1.Id(),
@@ -211,8 +208,7 @@ namespace DevRating.SqlServerClient.Test
                     null,
                     new DefaultId(),
                     work1.Id(),
-                    author1.Id(),
-                    createdAt
+                    author1.Id()
                 );
 
                 database.Entities().Ratings().InsertOperation().Insert(
@@ -221,8 +217,7 @@ namespace DevRating.SqlServerClient.Test
                     null,
                     new DefaultId(),
                     work1.Id(),
-                    author2.Id(),
-                    createdAt
+                    author2.Id()
                 );
 
                 var work2 = database.Entities().Works().InsertOperation().Insert(
@@ -243,8 +238,7 @@ namespace DevRating.SqlServerClient.Test
                     null,
                     new DefaultId(),
                     work2.Id(),
-                    author3.Id(),
-                    createdAt
+                    author3.Id()
                 );
 
                 Assert.Equal(2, database.Entities().Authors().GetOperation()

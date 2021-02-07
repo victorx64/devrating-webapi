@@ -38,8 +38,7 @@ namespace DevRating.SqlServerClient.Test
                                 null,
                                 createdAt
                             ).Id(),
-                            author.Id(),
-                            createdAt
+                            author.Id()
                         ).Id()
                     )
                 );
@@ -79,8 +78,7 @@ namespace DevRating.SqlServerClient.Test
                         null,
                         createdAt
                     ).Id(),
-                    author.Id(),
-                    createdAt
+                    author.Id()
                 );
 
                 Assert.True(database.Entities().Ratings().ContainsOperation().ContainsRatingOf(author.Id()));
@@ -120,8 +118,7 @@ namespace DevRating.SqlServerClient.Test
                         null,
                         createdAt
                     ).Id(),
-                    author.Id(),
-                    createdAt
+                    author.Id()
                 );
 
                 Assert.Equal(rating.Id(), database.Entities().Ratings().GetOperation().Rating(rating.Id()).Id());
@@ -161,8 +158,7 @@ namespace DevRating.SqlServerClient.Test
                         null,
                         createdAt
                     ).Id(),
-                    author.Id(),
-                    createdAt
+                    author.Id()
                 );
 
                 Assert.Equal(rating.Id(), database.Entities().Ratings().GetOperation().RatingOf(author.Id()).Id());
@@ -224,8 +220,7 @@ namespace DevRating.SqlServerClient.Test
                     null,
                     new DefaultId(),
                     work.Id(),
-                    author.Id(),
-                    createdAt
+                    author.Id()
                 );
 
                 Assert.Equal(rating.Id(),
@@ -290,8 +285,7 @@ namespace DevRating.SqlServerClient.Test
                     null,
                     new DefaultId(),
                     work1.Id(),
-                    author.Id(),
-                    work1.CreatedAt() + TimeSpan.FromHours(1)
+                    author.Id()
                 );
 
                 var work2 = database.Entities().Works().InsertOperation().Insert(
@@ -312,15 +306,14 @@ namespace DevRating.SqlServerClient.Test
                     null,
                     new DefaultId(),
                     work2.Id(),
-                    author.Id(),
-                    rating1.CreatedAt() + TimeSpan.FromHours(0.5)
+                    author.Id()
                 );
 
                 Assert.Equal(
                     rating2.Id(),
                     database.Entities().Ratings().GetOperation().Last(
                             author.Id(),
-                            rating2.CreatedAt()
+                            work2.CreatedAt()
                         )
                         .Single().Id()
                 );
