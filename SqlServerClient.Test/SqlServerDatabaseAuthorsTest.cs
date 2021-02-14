@@ -19,7 +19,7 @@ namespace DevRating.SqlServerClient.Test
             {
                 Assert.True(database.Entities().Authors().ContainsOperation()
                     .Contains(database.Entities().Authors().InsertOperation()
-                        .Insert("organization", "email", DateTimeOffset.UtcNow).Id()));
+                        .Insert("organization", "repository", "email", DateTimeOffset.UtcNow).Id()));
             }
             finally
             {
@@ -28,7 +28,7 @@ namespace DevRating.SqlServerClient.Test
         }
 
         [Fact]
-        public void ChecksInsertedAuthorByOrgAndEmail()
+        public void ChecksInsertedAuthorByCreds()
         {
             var database = new SqlServerDatabase(new TemporalLocalSqlConnection());
 
@@ -38,10 +38,20 @@ namespace DevRating.SqlServerClient.Test
             try
             {
                 var organization = "organization";
+                var repo = "repo";
 
-                Assert.True(database.Entities().Authors().ContainsOperation().Contains(organization,
-                    database.Entities().Authors().InsertOperation().Insert(organization, "email", DateTimeOffset.UtcNow)
-                        .Email()));
+                Assert.True(
+                    database.Entities().Authors().ContainsOperation().Contains(
+                        organization,
+                        repo,
+                        database
+                            .Entities()
+                            .Authors()
+                            .InsertOperation()
+                            .Insert(organization, repo, "email", DateTimeOffset.UtcNow)
+                            .Email()
+                    )
+                );
             }
             finally
             {
@@ -50,7 +60,35 @@ namespace DevRating.SqlServerClient.Test
         }
 
         [Fact]
-        public void ReturnsInsertedAuthorByOrgAndEmail()
+        public void InsertsLongEmail()
+        {
+            var database = new SqlServerDatabase(new TemporalLocalSqlConnection());
+            database.Instance().Connection().Open();
+            database.Instance().Create();
+            try
+            {
+                var organization = "organization";
+                var repo = "repo";
+                var email = "longer.than.50.longer.than.50.longer.than.50.longer.than.50.longer.than.50";
+
+                Assert.Equal(
+                    email,
+                    database
+                        .Entities()
+                        .Authors()
+                        .InsertOperation()
+                        .Insert(organization, repo, email, DateTimeOffset.UtcNow)
+                        .Email()
+                );
+            }
+            finally
+            {
+                database.Instance().Connection().Close();
+            }
+        }
+
+        [Fact]
+        public void ReturnsInsertedAuthorByCreds()
         {
             var database = new SqlServerDatabase(new TemporalLocalSqlConnection());
 
@@ -60,12 +98,13 @@ namespace DevRating.SqlServerClient.Test
             try
             {
                 var organization = "organization";
+                var repo = "repo";
 
                 var author = database.Entities().Authors().InsertOperation()
-                    .Insert(organization, "email", DateTimeOffset.UtcNow);
+                    .Insert(organization, repo, "email", DateTimeOffset.UtcNow);
 
                 Assert.Equal(author.Id(),
-                    database.Entities().Authors().GetOperation().Author(organization, author.Email()).Id());
+                    database.Entities().Authors().GetOperation().Author(organization, repo, author.Email()).Id());
             }
             finally
             {
@@ -84,7 +123,7 @@ namespace DevRating.SqlServerClient.Test
             try
             {
                 var author = database.Entities().Authors().InsertOperation()
-                    .Insert("organization", "email", DateTimeOffset.UtcNow);
+                    .Insert("organization", "repo", "email", DateTimeOffset.UtcNow);
 
                 Assert.Equal(author.Id(), database.Entities().Authors().GetOperation().Author(author.Id()).Id());
             }
@@ -95,7 +134,7 @@ namespace DevRating.SqlServerClient.Test
         }
 
         [Fact]
-        public void ReturnsOrganizationTopAuthors()
+        public void ReturnsTop()
         {
             var database = new SqlServerDatabase(new TemporalLocalSqlConnection());
 
@@ -105,14 +144,14 @@ namespace DevRating.SqlServerClient.Test
             try
             {
                 var organization = "organization";
+                var repo = "repo";
                 var createdAt = DateTimeOffset.UtcNow;
-                var author1 = database.Entities().Authors().InsertOperation().Insert(organization, "email1", createdAt);
-                var author2 = database.Entities().Authors().InsertOperation().Insert(organization, "email2", createdAt);
+                var author1 = database.Entities().Authors().InsertOperation().Insert(organization, repo, "email1", createdAt);
+                var author2 = database.Entities().Authors().InsertOperation().Insert(organization, repo, "email2", createdAt);
                 var author3 = database.Entities().Authors().InsertOperation()
-                    .Insert("ANOTHER organization", "email3", createdAt);
+                    .Insert("ANOTHER organization", repo, "email3", createdAt);
 
                 var work = database.Entities().Works().InsertOperation().Insert(
-                    "repo",
                     "start",
                     "end",
                     null,
@@ -142,7 +181,6 @@ namespace DevRating.SqlServerClient.Test
                 );
 
                 var work2 = database.Entities().Works().InsertOperation().Insert(
-                    "other repo",
                     "other start",
                     "other end",
                     null,
@@ -162,9 +200,15 @@ namespace DevRating.SqlServerClient.Test
                     author3.Id()
                 );
 
-                Assert.Equal(author1.Id(),
-                    database.Entities().Authors().GetOperation()
-                    .TopOfOrganization(organization, createdAt - TimeSpan.FromDays(1)).First().Id());
+                Assert.Equal(
+                    author1.Id(), 
+                    database.Entities()
+                        .Authors()
+                        .GetOperation()
+                        .Top(organization, repo, createdAt - TimeSpan.FromDays(1))
+                        .First()
+                        .Id()
+                );
             }
             finally
             {
@@ -173,7 +217,7 @@ namespace DevRating.SqlServerClient.Test
         }
 
         [Fact]
-        public void ReturnsRepoTopAuthors()
+        public void AllowsSameAuthorForTwoRepos()
         {
             var database = new SqlServerDatabase(new TemporalLocalSqlConnection());
 
@@ -183,71 +227,55 @@ namespace DevRating.SqlServerClient.Test
             try
             {
                 var organization = "organization";
-                var createdAt = DateTimeOffset.UtcNow;
-                var author1 = database.Entities().Authors().InsertOperation().Insert(organization, "email1", createdAt);
-                var author2 = database.Entities().Authors().InsertOperation().Insert(organization, "email2", createdAt);
-                var author3 = database.Entities().Authors().InsertOperation().Insert(organization, "email3", createdAt);
+                var email = "email";
 
-                var repository = "first repo";
+                var moment = DateTimeOffset.UtcNow;
 
-                var work1 = database.Entities().Works().InsertOperation().Insert(
-                    repository,
-                    "start",
-                    "end",
-                    null,
-                    author1.Id(),
-                    1u,
-                    new DefaultId(),
-                    null,
-                    createdAt
+                var author1 = database.Entities().Authors().InsertOperation()
+                    .Insert(organization, "repo1", email, moment);
+                var author2 = database.Entities().Authors().InsertOperation()
+                    .Insert(organization, "repo2", email, moment);
+
+                Assert.Equal(
+                    author1.Organization() + author1.Email(),
+                    author2.Organization() + author2.Email()
                 );
-
-                database.Entities().Ratings().InsertOperation().Insert(
-                    100,
-                    null,
-                    null,
-                    new DefaultId(),
-                    work1.Id(),
-                    author1.Id()
-                );
-
-                database.Entities().Ratings().InsertOperation().Insert(
-                    50,
-                    null,
-                    null,
-                    new DefaultId(),
-                    work1.Id(),
-                    author2.Id()
-                );
-
-                var work2 = database.Entities().Works().InsertOperation().Insert(
-                    "OTHER REPOSITORY",
-                    "some start commit",
-                    "some end commit",
-                    null,
-                    author1.Id(),
-                    1u,
-                    new DefaultId(),
-                    null,
-                    createdAt
-                );
-
-                database.Entities().Ratings().InsertOperation().Insert(
-                    75,
-                    null,
-                    null,
-                    new DefaultId(),
-                    work2.Id(),
-                    author3.Id()
-                );
-
-                Assert.Equal(2, database.Entities().Authors().GetOperation()
-                .TopOfRepository(repository, createdAt - TimeSpan.FromDays(1)).Count());
             }
             finally
             {
                 database.Instance().Connection().Close();
             }
+        }
+
+        [Fact]
+        public void ThrowsOnInsertingSameAuthor()
+        {
+            Assert.Throws<Microsoft.Data.SqlClient.SqlException>(
+                () =>
+                {
+                    var database = new SqlServerDatabase(new TemporalLocalSqlConnection());
+
+                    database.Instance().Connection().Open();
+                    database.Instance().Create();
+
+                    try
+                    {
+                        var organization = "organization";
+                        var email = "email";
+                        var repo = "repo";
+                        var moment = DateTimeOffset.UtcNow;
+
+                        var author1 = database.Entities().Authors().InsertOperation()
+                                .Insert(organization, repo, email, moment);
+                        var author2 = database.Entities().Authors().InsertOperation()
+                                .Insert(organization, repo, email, moment);
+                    }
+                    finally
+                    {
+                        database.Instance().Connection().Close();
+                    }
+                }
+            );
         }
     }
 }

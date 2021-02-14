@@ -49,15 +49,15 @@ namespace DevRating.WebApi.Controllers
             }
         }
 
-        [HttpGet("organizations/{organization}/{after}")]
-        public IActionResult GetByOrganization(string organization, DateTimeOffset after)
+        [HttpGet("repositories/{organization}/{repo}/{after}")]
+        public IActionResult GetTop(string organization, string repo, DateTimeOffset after)
         {
             _db.Instance().Connection().Open();
 
             try
             {
                 return new EntityAsJson(
-                    _db.Entities().Authors().GetOperation().TopOfOrganization(organization, after)
+                    _db.Entities().Authors().GetOperation().Top(organization, repo, after)
                 );
             }
             finally
@@ -66,39 +66,21 @@ namespace DevRating.WebApi.Controllers
             }
         }
 
-        [HttpGet("{organization}/{email}")]
-        public IActionResult GetByOrganizationAndEmail(string organization, string email)
+        [HttpGet("{organization}/{repo}/{email}")]
+        public IActionResult GetByCreds(string organization, string repo, string email)
         {
             _db.Instance().Connection().Open();
 
             try
             {
-                if (_db.Entities().Authors().ContainsOperation().Contains(organization, email))
+                if (_db.Entities().Authors().ContainsOperation().Contains(organization, repo, email))
                 {
                     return new EntityAsJson(
-                        _db.Entities().Authors().GetOperation().Author(organization, email)
+                        _db.Entities().Authors().GetOperation().Author(organization, repo, email)
                     );
                 }
 
                 return new NotFoundResult();
-            }
-            finally
-            {
-                _db.Instance().Connection().Close();
-            }
-        }
-
-        [HttpGet("repositories/{repository}/{after}")]
-        public IActionResult GetByRepository(string repository, DateTimeOffset after)
-        {
-            _db.Instance().Connection().Open();
-
-            try
-            {
-                return new EntityAsJson(
-                    _db.Entities().Authors().GetOperation()
-                    .TopOfRepository(repository, after)
-                );
             }
             finally
             {

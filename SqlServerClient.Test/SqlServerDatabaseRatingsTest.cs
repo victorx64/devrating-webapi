@@ -18,7 +18,7 @@ namespace DevRating.SqlServerClient.Test
             try
             {
                 var createdAt = DateTimeOffset.UtcNow;
-                var author = database.Entities().Authors().InsertOperation().Insert("organization", "email", createdAt);
+                var author = database.Entities().Authors().InsertOperation().Insert("organization", "repo", "email", createdAt);
 
                 Assert.True(
                     database.Entities().Ratings().ContainsOperation().Contains(
@@ -28,7 +28,6 @@ namespace DevRating.SqlServerClient.Test
                             null,
                             new DefaultId(),
                             database.Entities().Works().InsertOperation().Insert(
-                                "repo",
                                 "startCommit",
                                 "endCommit",
                                 null,
@@ -60,7 +59,7 @@ namespace DevRating.SqlServerClient.Test
             try
             {
                 var createdAt = DateTimeOffset.UtcNow;
-                var author = database.Entities().Authors().InsertOperation().Insert("organization", "email", createdAt);
+                var author = database.Entities().Authors().InsertOperation().Insert("organization", "repo", "email", createdAt);
 
                 database.Entities().Ratings().InsertOperation().Insert(
                     1100d,
@@ -68,7 +67,6 @@ namespace DevRating.SqlServerClient.Test
                     null,
                     new DefaultId(),
                     database.Entities().Works().InsertOperation().Insert(
-                        "repo",
                         "startCommit",
                         "endCommit",
                         null,
@@ -100,7 +98,7 @@ namespace DevRating.SqlServerClient.Test
             try
             {
                 var createdAt = DateTimeOffset.UtcNow;
-                var author = database.Entities().Authors().InsertOperation().Insert("organization", "email", createdAt);
+                var author = database.Entities().Authors().InsertOperation().Insert("organization", "repo", "email", createdAt);
 
                 var rating = database.Entities().Ratings().InsertOperation().Insert(
                     1100d,
@@ -108,7 +106,6 @@ namespace DevRating.SqlServerClient.Test
                     null,
                     new DefaultId(),
                     database.Entities().Works().InsertOperation().Insert(
-                        "repo",
                         "startCommit",
                         "endCommit",
                         null,
@@ -140,7 +137,7 @@ namespace DevRating.SqlServerClient.Test
             try
             {
                 var createdAt = DateTimeOffset.UtcNow;
-                var author = database.Entities().Authors().InsertOperation().Insert("organization", "email", createdAt);
+                var author = database.Entities().Authors().InsertOperation().Insert("organization", "repo", "email", createdAt);
 
                 var rating = database.Entities().Ratings().InsertOperation().Insert(
                     1100d,
@@ -148,7 +145,6 @@ namespace DevRating.SqlServerClient.Test
                     null,
                     new DefaultId(),
                     database.Entities().Works().InsertOperation().Insert(
-                        "repo",
                         "startCommit",
                         "endCommit",
                         null,
@@ -200,10 +196,9 @@ namespace DevRating.SqlServerClient.Test
             try
             {
                 var createdAt = DateTimeOffset.UtcNow;
-                var author = database.Entities().Authors().InsertOperation().Insert("organization", "email", createdAt);
+                var author = database.Entities().Authors().InsertOperation().Insert("organization", "repo", "email", createdAt);
 
                 var work = database.Entities().Works().InsertOperation().Insert(
-                    "repo",
                     "startCommit",
                     "endCommit",
                     null,
@@ -262,13 +257,11 @@ namespace DevRating.SqlServerClient.Test
             try
             {
                 var author = database.Entities().Authors().InsertOperation()
-                    .Insert("organization", "email", DateTimeOffset.UtcNow);
+                    .Insert("organization", "repo", "email", DateTimeOffset.UtcNow);
 
-                var repository = "repo";
                 var date = new DateTimeOffset(2020, 1, 1, 0, 0, 0, TimeSpan.Zero);
 
                 var work1 = database.Entities().Works().InsertOperation().Insert(
-                    repository,
                     "startCommit1",
                     "endCommit1",
                     null,
@@ -289,7 +282,6 @@ namespace DevRating.SqlServerClient.Test
                 );
 
                 var work2 = database.Entities().Works().InsertOperation().Insert(
-                    repository,
                     "startCommit2",
                     "endCommit2",
                     null,

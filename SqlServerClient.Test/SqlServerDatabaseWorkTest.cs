@@ -22,11 +22,10 @@ namespace DevRating.SqlServerClient.Test
                 Assert.Equal(
                     additions,
                     database.Entities().Works().InsertOperation().Insert(
-                        "repo",
                         "startCommit",
                         "endCommit",
                         null,
-                        database.Entities().Authors().InsertOperation().Insert("organization", "email", createdAt).Id(),
+                        database.Entities().Authors().InsertOperation().Insert("organization", "repo", "email", createdAt).Id(),
                         additions,
                         new DefaultId(),
                         null,
@@ -56,16 +55,15 @@ namespace DevRating.SqlServerClient.Test
                 Assert.Equal(
                     repository,
                     database.Entities().Works().InsertOperation().Insert(
-                        repository,
                         "startCommit",
                         "endCommit",
                         null,
-                        database.Entities().Authors().InsertOperation().Insert("organization", "email", createdAt).Id(),
+                        database.Entities().Authors().InsertOperation().Insert("organization", repository, "email", createdAt).Id(),
                         1u,
                         new DefaultId(),
                         null,
                         createdAt
-                    ).Repository()
+                    ).Author().Repository()
                 );
             }
             finally
@@ -90,11 +88,10 @@ namespace DevRating.SqlServerClient.Test
                 Assert.Equal(
                     start,
                     database.Entities().Works().InsertOperation().Insert(
-                        "repo",
                         start,
                         "endCommit",
                         null,
-                        database.Entities().Authors().InsertOperation().Insert("organization", "email", createdAt).Id(),
+                        database.Entities().Authors().InsertOperation().Insert("organization", "repo", "email", createdAt).Id(),
                         1u,
                         new DefaultId(),
                         null,
@@ -124,11 +121,10 @@ namespace DevRating.SqlServerClient.Test
                 Assert.Equal(
                     end,
                     database.Entities().Works().InsertOperation().Insert(
-                        "repo",
                         "startCommit",
                         end,
                         null,
-                        database.Entities().Authors().InsertOperation().Insert("organization", "email", createdAt).Id(),
+                        database.Entities().Authors().InsertOperation().Insert("organization", "repo", "email", createdAt).Id(),
                         1u,
                         new DefaultId(),
                         null,
@@ -158,11 +154,10 @@ namespace DevRating.SqlServerClient.Test
                 Assert.Equal(
                     since,
                     database.Entities().Works().InsertOperation().Insert(
-                        "repo",
                         "startCommit",
                         "endCommit",
                         since,
-                        database.Entities().Authors().InsertOperation().Insert("organization", "email", createdAt).Id(),
+                        database.Entities().Authors().InsertOperation().Insert("organization", "repo", "email", createdAt).Id(),
                         1u,
                         new DefaultId(),
                         null,
@@ -187,12 +182,11 @@ namespace DevRating.SqlServerClient.Test
             try
             {
                 var createdAt = DateTimeOffset.UtcNow;
-                var author = database.Entities().Authors().InsertOperation().Insert("organization", "email", createdAt);
+                var author = database.Entities().Authors().InsertOperation().Insert("organization", "repo", "email", createdAt);
 
                 Assert.Equal(
                     author.Id(),
                     database.Entities().Works().InsertOperation().Insert(
-                        "repo",
                         "startCommit",
                         "endCommit",
                         null,
@@ -221,7 +215,7 @@ namespace DevRating.SqlServerClient.Test
             try
             {
                 var createdAt = DateTimeOffset.UtcNow;
-                var author = database.Entities().Authors().InsertOperation().Insert("organization", "email", createdAt);
+                var author = database.Entities().Authors().InsertOperation().Insert("organization", "repo", "email", createdAt);
 
                 var previous = database.Entities().Ratings().InsertOperation().Insert(
                     3423,
@@ -229,7 +223,6 @@ namespace DevRating.SqlServerClient.Test
                     null,
                     new DefaultId(),
                     database.Entities().Works().InsertOperation().Insert(
-                        "repo",
                         "startCommit1",
                         "endCommit1",
                         null,
@@ -245,7 +238,6 @@ namespace DevRating.SqlServerClient.Test
                 Assert.Equal(
                     previous.Id(),
                     database.Entities().Works().InsertOperation().Insert(
-                        "repo",
                         "startCommit",
                         "endCommit",
                         null,
@@ -276,12 +268,11 @@ namespace DevRating.SqlServerClient.Test
                 var createdAt = DateTimeOffset.UtcNow;
                 Assert.NotNull(
                     database.Entities().Works().InsertOperation().Insert(
-                        "repo",
                         "startCommit",
                         "endCommit",
                         "sinceCommit",
                         database.Entities().Authors().InsertOperation()
-                            .Insert("organization", "email@domain", createdAt).Id(),
+                            .Insert("organization", "repo", "email@domain", createdAt).Id(),
                         2u,
                         new DefaultId(),
                         null,

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System;
 using DevRating.DefaultObject;
 using DevRating.Domain;
 using DevRating.SqlServerClient;
@@ -50,50 +47,8 @@ namespace DevRating.WebApi.Controllers
             }
         }
 
-        [HttpGet("organizations/{organization}")]
-        public IActionResult GetByOrganization(string organization)
-        {
-            _db.Instance().Connection().Open();
-
-            try
-            {
-                return new EntityAsJson(
-                    _db.Entities().Works().GetOperation()
-                        .LastOfOrganization(
-                            organization,
-                            DateTimeOffset.MinValue
-                        )
-                );
-            }
-            finally
-            {
-                _db.Instance().Connection().Close();
-            }
-        }
-
-        [HttpGet("organizations/{organization}/{after}")]
-        public IActionResult GetByOrganization(string organization, DateTimeOffset after)
-        {
-            _db.Instance().Connection().Open();
-
-            try
-            {
-                return new EntityAsJson(
-                    _db.Entities().Works().GetOperation()
-                        .LastOfOrganization(
-                            organization,
-                            after
-                        )
-                );
-            }
-            finally
-            {
-                _db.Instance().Connection().Close();
-            }
-        }
-
-        [HttpGet("repositories/{repository}")]
-        public IActionResult GetByRepository(string repository)
+        [HttpGet("repositories/{organization}/{repository}")]
+        public IActionResult GetByRepository(string organization, string repository)
         {
             _db.Instance().Connection().Open();
 
@@ -102,6 +57,7 @@ namespace DevRating.WebApi.Controllers
                 return new EntityAsJson(
                     _db.Entities().Works().GetOperation()
                         .Last(
+                            organization,
                             repository,
                             DateTimeOffset.MinValue
                         )
@@ -113,8 +69,8 @@ namespace DevRating.WebApi.Controllers
             }
         }
 
-        [HttpGet("repositories/{repository}/{after}")]
-        public IActionResult GetByRepository(string repository, DateTimeOffset after)
+        [HttpGet("repositories/{organization}/{repository}/{after}")]
+        public IActionResult GetByRepository(string organization, string repository, DateTimeOffset after)
         {
             _db.Instance().Connection().Open();
 
@@ -123,6 +79,7 @@ namespace DevRating.WebApi.Controllers
                 return new EntityAsJson(
                     _db.Entities().Works().GetOperation()
                         .Last(
+                            organization,
                             repository,
                             after
                         )

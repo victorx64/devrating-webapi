@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Text;
 using DevRating.DefaultObject;
 using DevRating.EloRating;
 using Microsoft.AspNetCore.Authorization;
@@ -22,7 +21,7 @@ namespace DevRating.WebApi.Controllers
         private readonly DevRating.WebApi.Domain.Database _webDb;
 
         public DiffsController(ILogger<DiffsController> log, IConfiguration configuration)
-            : this (
+            : this(
                 log,
                 new DevRating.SqlServerClient.SqlServerDatabase(
                     new TransactedDbConnection(
@@ -39,7 +38,7 @@ namespace DevRating.WebApi.Controllers
         }
 
         private DiffsController(
-            ILogger<DiffsController> log, 
+            ILogger<DiffsController> log,
             DevRating.Domain.Database domainDb,
             DevRating.WebApi.Domain.Database webDb
         )
@@ -67,6 +66,8 @@ namespace DevRating.WebApi.Controllers
             public uint Additions { get; set; } = default;
             [Required]
             public IEnumerable<Deletion> Deletions { get; set; } = Array.Empty<Deletion>();
+            [Required]
+            public DateTimeOffset CreatedAt { get; set; } = default;
             public class Deletion
             {
                 [Required]
@@ -90,8 +91,6 @@ namespace DevRating.WebApi.Controllers
             {
                 var factory = new DefaultEntityFactory(_domainDb.Entities(), new EloFormula());
 
-                var createdAt = DateTimeOffset.UtcNow;
-
                 var work = factory.InsertedWork(
                     diff.Organization,
                     diff.Repository,
@@ -101,15 +100,16 @@ namespace DevRating.WebApi.Controllers
                     diff.Email,
                     diff.Additions,
                     diff.Link,
-                    createdAt
+                    diff.CreatedAt
                 );
 
                 factory.InsertRatings(
                     diff.Organization,
+                    diff.Repository,
                     diff.Email,
                     diff.Deletions.Select(d => new DefaultDeletion(d.Email, d.Counted, d.Ignored)),
                     work.Id(),
-                    createdAt
+                    diff.CreatedAt
                 );
 
                 transaction.Commit();
@@ -135,26 +135,19 @@ namespace DevRating.WebApi.Controllers
 
             try
             {
-                if (_webDb.Entities().Organizations().ContainsOperation().Contains(diff.Organization))
+                if (_webDb.Entities().Keys().ContainsOperation().Contains(diff.Organization, key))
                 {
-                    var org = _webDb.Entities().Organizations().GetOperation().Organization(diff.Organization).Id();
-
-                    if (!_webDb.Entities().Keys().ContainsOperation().Contains(org, key))
-                    {
-                        return new UnauthorizedObjectResult("Key not found");
-                    }
+                    return Post(diff);
                 }
                 else
                 {
-                    return new BadRequestObjectResult("Organization not found");
+                    return new UnauthorizedObjectResult("Key not found");
                 }
             }
             finally
             {
                 _webDb.Instance().Connection().Close();
             }
-
-            return Post(diff);
         }
     }
 }

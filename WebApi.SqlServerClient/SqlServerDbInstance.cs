@@ -18,30 +18,16 @@ namespace DevRating.WebApi.SqlServerClient
             using var command = _connection.CreateCommand();
 
             command.CommandText = @"
-                create table Organization
-                (
-                    Id int identity
-                        constraint PK_Organization
-                            primary key,
-                    CreatedAt datetimeoffset(7) not null,
-                    Name nvarchar(256) not null,
-                    AuthorizedSubject nvarchar(max) not null,
-                    constraint UK_Organization_Name
-                        unique (Name)
-                );
-
                 create table [Key]
                 (
                     Id int identity
                         constraint PK_Key
                             primary key,
+                    Organization nvarchar(256) not null,
                     CreatedAt datetimeoffset(7) not null,
                     RevokedAt datetimeoffset(7),
                     Name nvarchar(256),
-                    Value nvarchar(256) not null,
-                    OrganizationId int not null
-                        constraint FK_Key_OrganizationId
-                            references Organization
+                    Value nvarchar(256) not null
                 );
             ";
 
@@ -50,8 +36,7 @@ namespace DevRating.WebApi.SqlServerClient
 
         public bool Present()
         {
-            return HasTable("Organization") &&
-                   HasTable("Key");
+            return HasTable("Key");
         }
 
         public IDbConnection Connection()

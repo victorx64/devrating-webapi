@@ -42,12 +42,45 @@ namespace DevRating.SqlServerClient.Test
 
             try
             {
-                var email = "email";
                 var organization = "organization";
 
-                Assert.Equal(organization,
-                    database.Entities().Authors().InsertOperation().Insert(organization, email, DateTimeOffset.UtcNow)
-                        .Organization());
+                Assert.Equal(
+                    organization,
+                    database
+                        .Entities()
+                        .Authors()
+                        .InsertOperation()
+                        .Insert(organization, "repo", "email", DateTimeOffset.UtcNow)
+                        .Organization()
+                );
+            }
+            finally
+            {
+                database.Instance().Connection().Close();
+            }
+        }
+
+        [Fact]
+        public void ReturnsValidRepository()
+        {
+            var database = new SqlServerDatabase(new TemporalLocalSqlConnection());
+
+            database.Instance().Connection().Open();
+            database.Instance().Create();
+
+            try
+            {
+                var repo = "repo";
+
+                Assert.Equal(
+                    repo,
+                    database
+                        .Entities()
+                        .Authors()
+                        .InsertOperation()
+                        .Insert("organization", repo, "email", DateTimeOffset.UtcNow)
+                        .Repository()
+                );
             }
             finally
             {
@@ -69,7 +102,7 @@ namespace DevRating.SqlServerClient.Test
                 var organization = "organization";
 
                 Assert.Equal(email,
-                    database.Entities().Authors().InsertOperation().Insert(organization, email, DateTimeOffset.UtcNow)
+                    database.Entities().Authors().InsertOperation().Insert(organization, "repo", email, DateTimeOffset.UtcNow)
                         .Email());
             }
             finally
@@ -93,7 +126,7 @@ namespace DevRating.SqlServerClient.Test
                 Assert.NotNull(
                     JsonSerializer.Deserialize<AuthorDto>(
                         database.Entities().Authors().InsertOperation()
-                            .Insert(organization, "email@domain", DateTimeOffset.UtcNow)
+                            .Insert(organization, "repo", "email@domain", DateTimeOffset.UtcNow)
                             .ToJson()
                     )
                 );
@@ -118,10 +151,9 @@ namespace DevRating.SqlServerClient.Test
 
                 var createdAt = DateTimeOffset.UtcNow;
                 var author = database.Entities().Authors().InsertOperation()
-                    .Insert(organization, "email@domain", createdAt);
+                    .Insert(organization, "repo", "email@domain", createdAt);
 
                 var work = database.Entities().Works().InsertOperation().Insert(
-                    "repo",
                     "start",
                     "end",
                     null,

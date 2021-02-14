@@ -63,7 +63,6 @@ namespace DevRating.SqlServerClient
             command.CommandText = @"
                 SELECT 
                     Work.Id,
-                    Repository,
                     Link,
                     StartCommit,
                     EndCommit,
@@ -92,7 +91,6 @@ namespace DevRating.SqlServerClient
                 new Dto
                 {
                     Id = reader["Id"],
-                    Repository = (string) reader["Repository"],
                     Link = reader["Link"] != DBNull.Value ? (string) reader["Link"] : null,
                     StartCommit = (string) reader["StartCommit"],
                     EndCommit = (string) reader["EndCommit"],
@@ -178,17 +176,6 @@ namespace DevRating.SqlServerClient
             reader.Read();
 
             return new SqlServerRating(_connection, new DefaultId(reader["UsedRatingId"]));
-        }
-
-        public string Repository()
-        {
-            using var command = _connection.CreateCommand();
-
-            command.CommandText = "SELECT Repository FROM Work WHERE Id = @Id";
-
-            command.Parameters.Add(new SqlParameter("@Id", SqlDbType.Int) {Value = _id.Value()});
-
-            return (string) command.ExecuteScalar()!;
         }
 
         public string Start()

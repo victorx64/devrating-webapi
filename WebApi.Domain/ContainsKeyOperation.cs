@@ -5,6 +5,7 @@ namespace DevRating.WebApi.Domain
     public interface ContainsKeyOperation
     {
         bool Contains(Id id);
-        bool Contains(Id organization, string value);
+        bool Contains(Id id, string organization);
+        bool Contains(string organization, string value);
     }
 }

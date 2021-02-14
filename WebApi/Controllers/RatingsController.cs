@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using DevRating.DefaultObject;
+﻿using DevRating.DefaultObject;
 using DevRating.Domain;
 using DevRating.SqlServerClient;
 using Microsoft.AspNetCore.Mvc;
