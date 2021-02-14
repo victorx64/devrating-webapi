@@ -131,22 +131,26 @@ namespace DevRating.WebApi.Controllers
         [HttpPost("{key}")]
         public IActionResult Post(string key, Diff diff)
         {
+            var toPost = false;
+
             _webDb.Instance().Connection().Open();
 
             try
             {
-                if (_webDb.Entities().Keys().ContainsOperation().Contains(diff.Organization, key))
-                {
-                    return Post(diff);
-                }
-                else
-                {
-                    return new UnauthorizedObjectResult("Key not found");
-                }
+                toPost = _webDb.Entities().Keys().ContainsOperation().Contains(diff.Organization, key);
             }
             finally
             {
                 _webDb.Instance().Connection().Close();
+            }
+
+            if (toPost)
+            {
+                return Post(diff);
+            }
+            else
+            {
+                return new UnauthorizedObjectResult("Key not found");
             }
         }
     }

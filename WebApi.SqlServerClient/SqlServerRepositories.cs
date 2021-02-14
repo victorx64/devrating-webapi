@@ -1,47 +1,40 @@
 using System.Collections.Generic;
 using System.Data;
-using DevRating.DefaultObject;
-using DevRating.Domain;
 using DevRating.WebApi.Domain;
 using Microsoft.Data.SqlClient;
 
 namespace DevRating.WebApi.SqlServerClient
 {
-    internal sealed class SqlServerGetKeyOperation : GetKeyOperation
+    internal sealed class SqlServerRepositories : Repositories
     {
         private readonly IDbConnection _connection;
 
-        public SqlServerGetKeyOperation(IDbConnection connection)
+        public SqlServerRepositories(IDbConnection connection)
         {
             _connection = connection;
         }
 
-        public Key Key(Id id)
-        {
-            return new SqlServerKey(_connection, id);
-        }
-
-        public IEnumerable<Key> OrganizationKeys(string organization)
+        public IEnumerable<string> Repositories(string organization)
         {
             using var command = _connection.CreateCommand();
 
             command.CommandText = @"
-                SELECT Id
-                FROM [Key]
+                SELECT DISTINCT Repository
+                FROM Author
                 WHERE Organization = @Organization";
 
             command.Parameters.Add(new SqlParameter("@Organization", SqlDbType.NVarChar, 256) { Value = organization });
 
             using var reader = command.ExecuteReader();
 
-            var keys = new List<Key>();
+            var repos = new List<string>();
 
             while (reader.Read())
             {
-                keys.Add(new SqlServerKey(_connection, new DefaultId(reader["Id"])));
+                repos.Add((string)reader["Repository"]);
             }
 
-            return keys;
+            return repos;
         }
     }
 }

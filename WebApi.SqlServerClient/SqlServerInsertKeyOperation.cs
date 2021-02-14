@@ -7,7 +7,7 @@ using Microsoft.Data.SqlClient;
 
 namespace DevRating.WebApi.SqlServerClient
 {
-    internal class SqlServerInsertKeyOperation : InsertKeyOperation
+    internal sealed class SqlServerInsertKeyOperation : InsertKeyOperation
     {
         private readonly IDbConnection _connection;
 

@@ -67,7 +67,7 @@ namespace DevRating.WebApi.SqlServerClient
                     Organization,
                     Name
                 FROM [Key]
-                WHERE k.Id = @Id
+                WHERE Id = @Id
             ";
 
             command.Parameters.Add(new SqlParameter("@Id", SqlDbType.Int) { Value = _id.Value() });

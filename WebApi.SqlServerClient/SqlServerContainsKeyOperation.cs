@@ -5,7 +5,7 @@ using Microsoft.Data.SqlClient;
 
 namespace DevRating.WebApi.SqlServerClient
 {
-    internal class SqlServerContainsKeyOperation : ContainsKeyOperation
+    internal sealed class SqlServerContainsKeyOperation : ContainsKeyOperation
     {
         private readonly IDbConnection _connection;
 
