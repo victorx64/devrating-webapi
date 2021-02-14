@@ -25,9 +25,10 @@ namespace DevRating.SqlServerClient
                             primary key,
                     CreatedAt datetimeoffset(7) not null,
                     Organization nvarchar(256) not null,
+                    Repository   nvarchar(256) not null,
                     Email nvarchar(256) not null,
                     constraint UK_Author_Organization_Email
-                        unique (Organization, Email)
+                        unique (Organization, Repository, Email)
                 );
 
                 create table Rating
@@ -57,7 +58,6 @@ namespace DevRating.SqlServerClient
                         constraint PK_Work
                             primary key,
                     CreatedAt datetimeoffset(7) not null,
-                    Repository nvarchar(max) not null,
                     Link nvarchar(max),
                     StartCommit nvarchar(50) not null,
                     EndCommit nvarchar(50) not null,

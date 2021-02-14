@@ -13,14 +13,20 @@ namespace DevRating.SqlServerClient
             _connection = connection;
         }
 
-        public bool Contains(string organization, string email)
+        public bool Contains(string organization, string repository, string email)
         {
             using var command = _connection.CreateCommand();
 
-            command.CommandText = "SELECT Id FROM Author WHERE Email = @Email AND Organization = @Organization";
+            command.CommandText = @"
+                SELECT Id
+                FROM Author
+                WHERE Email = @Email
+                AND Organization = @Organization
+                AND Repository = @Repository";
 
             command.Parameters.Add(new SqlParameter("@Email", SqlDbType.NVarChar, 256) {Value = email});
             command.Parameters.Add(new SqlParameter("@Organization", SqlDbType.NVarChar, 256) {Value = organization});
+            command.Parameters.Add(new SqlParameter("@Repository", SqlDbType.NVarChar, 256) {Value = repository});
 
             using var reader = command.ExecuteReader();
 

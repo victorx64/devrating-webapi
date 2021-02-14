@@ -38,21 +38,6 @@ namespace DevRating.WebApi.SqlServerClient
             return _id;
         }
 
-        public Organization Organization()
-        {
-            using var command = _connection.CreateCommand();
-
-            command.CommandText = "SELECT OrganizationId FROM [Key] WHERE Id = @Id";
-
-            command.Parameters.Add(new SqlParameter("@Id", SqlDbType.Int) { Value = _id.Value() });
-
-            using var reader = command.ExecuteReader();
-
-            reader.Read();
-
-            return new SqlServerOrganization(_connection, new DefaultObject.DefaultId(reader["OrganizationId"]));
-        }
-
         public DateTimeOffset? RevokedAt()
         {
             using var command = _connection.CreateCommand();
@@ -76,15 +61,13 @@ namespace DevRating.WebApi.SqlServerClient
 
             command.CommandText = @"
                 SELECT
-                    k.Id, 
-                    k.CreatedAt, 
-                    k.RevokedAt, 
-                    k.OrganizationId,
-                    k.Name,
-                    o.Name
-                FROM [Key] k
-                INNER JOIN Organization o on k.OrganizationId = o.Id
-                WHERE k.Id = @Id
+                    Id,
+                    CreatedAt,
+                    RevokedAt,
+                    Organization,
+                    Name
+                FROM [Key]
+                WHERE Id = @Id
             ";
 
             command.Parameters.Add(new SqlParameter("@Id", SqlDbType.Int) { Value = _id.Value() });
@@ -97,9 +80,8 @@ namespace DevRating.WebApi.SqlServerClient
                 new Dto
                 {
                     Id = reader["Id"],
-                    Organization = (string)reader["Name"],
+                    Organization = (string)reader["Organization"],
                     Name = reader["Name"] == DBNull.Value ? null : (string)reader["Name"],
-                    OrganizationId = reader["OrganizationId"],
                     CreatedAt = (DateTimeOffset)reader["CreatedAt"],
                     RevokedAt = reader["RevokedAt"] == DBNull.Value ? null : (DateTimeOffset?)reader["RevokedAt"]
                 }
@@ -136,12 +118,26 @@ namespace DevRating.WebApi.SqlServerClient
             return (string)reader["Value"];
         }
 
+        public string Organization()
+        {
+            using var command = _connection.CreateCommand();
+
+            command.CommandText = "SELECT Organization FROM [Key] WHERE Id = @Id";
+
+            command.Parameters.Add(new SqlParameter("@Id", SqlDbType.Int) { Value = _id.Value() });
+
+            using var reader = command.ExecuteReader();
+
+            reader.Read();
+
+            return (string)reader["Organization"];
+        }
+
         private sealed class Dto
         {
             public object Id { get; set; } = new object();
             public string? Name { get; set; } = default;
             public string Organization { get; set; } = string.Empty;
-            public object OrganizationId { get; set; } = new object();
             public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.MinValue;
             public DateTimeOffset? RevokedAt { get; set; } = default;
         }

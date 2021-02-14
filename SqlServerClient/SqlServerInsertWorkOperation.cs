@@ -16,7 +16,6 @@ namespace DevRating.SqlServerClient
         }
 
         public Work Insert(
-            string repository,
             string start,
             string end,
             string? since,
@@ -31,8 +30,7 @@ namespace DevRating.SqlServerClient
 
             command.CommandText = @"
                 INSERT INTO Work
-                    (Repository
-                    ,Link
+                    (Link
                     ,StartCommit
                     ,EndCommit
                     ,SinceCommit
@@ -42,8 +40,7 @@ namespace DevRating.SqlServerClient
                     ,CreatedAt)
                 OUTPUT Inserted.Id
                 VALUES
-                    (@Repository
-                    ,@Link
+                    (@Link
                     ,@StartCommit
                     ,@EndCommit
                     ,@SinceCommit
@@ -52,7 +49,6 @@ namespace DevRating.SqlServerClient
                     ,@UsedRatingId
                     ,@CreatedAt)";
 
-            command.Parameters.Add(new SqlParameter("@Repository", SqlDbType.NVarChar) {Value = repository});
             command.Parameters.Add(new SqlParameter("@Link", SqlDbType.NVarChar) {Value = link ?? (object) DBNull.Value});
             command.Parameters.Add(new SqlParameter("@StartCommit", SqlDbType.NVarChar, 50) {Value = start});
             command.Parameters.Add(new SqlParameter("@EndCommit", SqlDbType.NVarChar, 50) {Value = end});

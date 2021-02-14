@@ -45,6 +45,7 @@ namespace DevRating.SqlServerClient
             public object? RatingId { get; set; }
             public double? Rating { get; set; }
             public string Organization { get; set; } = string.Empty;
+            public string Repository { get; set; } = string.Empty;
             public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.MinValue;
         }
 
@@ -66,7 +67,7 @@ namespace DevRating.SqlServerClient
         {
             using var command = _connection.CreateCommand();
 
-            command.CommandText = "SELECT Id, Email, Organization, CreatedAt FROM Author WHERE Id = @Id";
+            command.CommandText = "SELECT Id, Email, Organization, Repository, CreatedAt FROM Author WHERE Id = @Id";
 
             command.Parameters.Add(new SqlParameter("@Id", SqlDbType.Int) { Value = _id.Value() });
 
@@ -79,6 +80,7 @@ namespace DevRating.SqlServerClient
                 Id = reader["Id"],
                 Email = (string)reader["Email"],
                 Organization = (string)reader["Organization"],
+                Repository = (string)reader["Repository"],
                 CreatedAt = (DateTimeOffset)reader["CreatedAt"]
             };
         }
@@ -158,6 +160,21 @@ namespace DevRating.SqlServerClient
             }
 
             return ratings;
+        }
+
+        public string Repository()
+        {
+            using var command = _connection.CreateCommand();
+
+            command.CommandText = "SELECT Repository FROM Author WHERE Id = @Id";
+
+            command.Parameters.Add(new SqlParameter("@Id", SqlDbType.Int) { Value = _id.Value() });
+
+            using var reader = command.ExecuteReader();
+
+            reader.Read();
+
+            return (string)reader["Repository"];
         }
     }
 }

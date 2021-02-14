@@ -20,11 +20,10 @@ namespace DevRating.SqlServerClient.Test
                 var createdAt = DateTimeOffset.UtcNow;
                 Assert.True(database.Entities().Works().ContainsOperation().Contains(
                         database.Entities().Works().InsertOperation().Insert(
-                            "repo",
                             "startCommit",
                             "endCommit",
                             null,
-                            database.Entities().Authors().InsertOperation().Insert("organization", "email", createdAt).Id(),
+                            database.Entities().Authors().InsertOperation().Insert("organization", "repo", "email", createdAt).Id(),
                             1u,
                             new DefaultId(),
                             null,
@@ -51,11 +50,10 @@ namespace DevRating.SqlServerClient.Test
             {
                 var createdAt = DateTimeOffset.UtcNow;
                 database.Entities().Works().InsertOperation().Insert(
-                    "repo",
                     "startCommit",
                     "endCommit",
                     null,
-                    database.Entities().Authors().InsertOperation().Insert("organization", "email", createdAt).Id(),
+                    database.Entities().Authors().InsertOperation().Insert("organization", "repo", "email", createdAt).Id(),
                     1u,
                     new DefaultId(),
                     null,
@@ -63,6 +61,7 @@ namespace DevRating.SqlServerClient.Test
                 );
 
                 Assert.True(database.Entities().Works().ContainsOperation().Contains(
+                    "organization",
                     "repo",
                     "startCommit",
                     "endCommit"
@@ -86,11 +85,10 @@ namespace DevRating.SqlServerClient.Test
             {
                 var createdAt = DateTimeOffset.UtcNow;
                 var work = database.Entities().Works().InsertOperation().Insert(
-                    "repo",
                     "startCommit",
                     "endCommit",
                     null,
-                    database.Entities().Authors().InsertOperation().Insert("organization", "email", createdAt).Id(),
+                    database.Entities().Authors().InsertOperation().Insert("organization", "repo", "email", createdAt).Id(),
                     1u,
                     new DefaultId(),
                     null,
@@ -118,17 +116,17 @@ namespace DevRating.SqlServerClient.Test
                 var createdAt = DateTimeOffset.UtcNow;
                 Assert.Equal(
                     database.Entities().Works().InsertOperation().Insert(
-                        "repo",
                         "startCommit",
                         "endCommit",
                         null,
-                        database.Entities().Authors().InsertOperation().Insert("organization", "email", createdAt).Id(),
+                        database.Entities().Authors().InsertOperation().Insert("organization", "repo", "email", createdAt).Id(),
                         1u,
                         new DefaultId(),
                         null,
                         createdAt
                     ).Id(),
                     database.Entities().Works().GetOperation().Work(
+                        "organization",
                         "repo",
                         "startCommit",
                         "endCommit"
@@ -153,11 +151,10 @@ namespace DevRating.SqlServerClient.Test
             {
                 var createdAt = DateTimeOffset.UtcNow;
                 database.Entities().Works().InsertOperation().Insert(
-                    "repo",
                     "start1",
                     "end1",
                     null,
-                    database.Entities().Authors().InsertOperation().Insert("organization", "author", createdAt).Id(),
+                    database.Entities().Authors().InsertOperation().Insert("organization", "repo", "author", createdAt).Id(),
                     1u,
                     new DefaultId(),
                     null, 
@@ -165,11 +162,10 @@ namespace DevRating.SqlServerClient.Test
                 );
 
                 var last = database.Entities().Works().InsertOperation().Insert(
-                    "repo",
                     "start2",
                     "end2",
                     null,
-                    database.Entities().Authors().InsertOperation().Insert("organization", "other author", createdAt).Id(),
+                    database.Entities().Authors().InsertOperation().Insert("organization", "repo", "other author", createdAt).Id(),
                     2u,
                     new DefaultId(),
                     null, 
@@ -178,7 +174,7 @@ namespace DevRating.SqlServerClient.Test
 
                 Assert.Equal(
                     last.Id(),
-                    database.Entities().Works().GetOperation().Last("repo", createdAt).First().Id()
+                    database.Entities().Works().GetOperation().Last("organization", "repo", createdAt).First().Id()
                 );
             }
             finally
@@ -199,11 +195,10 @@ namespace DevRating.SqlServerClient.Test
             {
                 var createdAt = DateTimeOffset.UtcNow;
                 var first = database.Entities().Works().InsertOperation().Insert(
-                    "repo",
                     "start1",
                     "end1",
                     null,
-                    database.Entities().Authors().InsertOperation().Insert("organization", "author", createdAt).Id(),
+                    database.Entities().Authors().InsertOperation().Insert("organization", "repo", "author", createdAt).Id(),
                     1u,
                     new DefaultId(),
                     null, 
@@ -211,11 +206,10 @@ namespace DevRating.SqlServerClient.Test
                 );
 
                 database.Entities().Works().InsertOperation().Insert(
-                    "repo",
                     "start2",
                     "end2",
                     null,
-                    database.Entities().Authors().InsertOperation().Insert("organization", "other author", createdAt).Id(),
+                    database.Entities().Authors().InsertOperation().Insert("organization", "repo", "other author", createdAt).Id(),
                     2u,
                     new DefaultId(),
                     null, 
@@ -224,7 +218,7 @@ namespace DevRating.SqlServerClient.Test
 
                 Assert.Equal(
                     first.Id(),
-                    database.Entities().Works().GetOperation().Last("repo", createdAt).Last().Id()
+                    database.Entities().Works().GetOperation().Last("organization", "repo", createdAt).Last().Id()
                 );
             }
             finally
@@ -247,12 +241,12 @@ namespace DevRating.SqlServerClient.Test
                 var createdInPast = createdAt - TimeSpan.FromSeconds(1);
 
                 database.Entities().Works().InsertOperation().Insert(
-                    "repo",
                     "start1",
                     "end1",
                     null,
                     database.Entities().Authors().InsertOperation().Insert(
                         "organization",
+                        "repo",
                         "author",
                         createdInPast).Id(),
                     1u,
@@ -263,12 +257,12 @@ namespace DevRating.SqlServerClient.Test
 
                 Assert.Equal(
                     database.Entities().Works().InsertOperation().Insert(
-                        "repo",
                         "start2",
                         "end2",
                         null,
                         database.Entities().Authors().InsertOperation().Insert(
                             "organization",
+                            "repo",
                             "other author",
                             createdAt).Id(),
                         2u,
@@ -276,7 +270,7 @@ namespace DevRating.SqlServerClient.Test
                         null,
                         createdAt
                     ).Id(),
-                    database.Entities().Works().GetOperation().Last("repo", createdAt).Last().Id()
+                    database.Entities().Works().GetOperation().Last("organization", "repo", createdAt).Last().Id()
                 );
             }
             finally

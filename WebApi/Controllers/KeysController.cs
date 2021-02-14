@@ -31,8 +31,8 @@ namespace DevRating.WebApi.Controllers
         }
 
         [Authorize]
-        [HttpGet("{organization}")]
-        public IActionResult Get(string organization)
+        [HttpGet]
+        public IActionResult Get()
         {
             _db.Instance().Connection().Open();
 
@@ -40,19 +40,12 @@ namespace DevRating.WebApi.Controllers
             {
                 var subject = User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
 
-                if (_db.Entities().Organizations().ContainsOperation().Contains(organization, subject))
-                {
-                    return new EntityAsJson(
-                        _db.Entities()
-                            .Keys()
-                            .GetOperation()
-                            .OrganizationKeys(organization)
-                    );
-                }
-                else
-                {
-                    return new NotFoundResult();
-                }
+                return new EntityAsJson(
+                    _db.Entities()
+                        .Keys()
+                        .GetOperation()
+                        .OrganizationKeys(subject)
+                );
             }
             finally
             {
@@ -68,8 +61,8 @@ namespace DevRating.WebApi.Controllers
         }
 
         [Authorize]
-        [HttpPost("{organization}")]
-        public IActionResult Post(string organization, Key key)
+        [HttpPost]
+        public IActionResult Post(Key key)
         {
             _db.Instance().Connection().Open();
 
@@ -77,28 +70,17 @@ namespace DevRating.WebApi.Controllers
             {
                 var subject = User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
 
-                if (_db.Entities().Organizations().ContainsOperation().Contains(organization, subject))
-                {
-                    return new EntityAsJson(
-                        _db.Entities()
-                            .Keys()
-                            .InsertOperation()
-                            .Insert(
-                                key.Name,
-                                key.Value,
-                                _db.Entities()
-                                    .Organizations()
-                                    .GetOperation()
-                                    .Organization(organization)
-                                    .Id(),
-                                DateTimeOffset.UtcNow
-                            )
-                    );
-                }
-                else
-                {
-                    return new NotFoundResult();
-                }
+                return new EntityAsJson(
+                    _db.Entities()
+                        .Keys()
+                        .InsertOperation()
+                        .Insert(
+                            key.Name,
+                            key.Value,
+                            subject,
+                            DateTimeOffset.UtcNow
+                        )
+                );
             }
             finally
             {
@@ -114,23 +96,16 @@ namespace DevRating.WebApi.Controllers
 
             try
             {
-                if (_db.Entities().Keys().ContainsOperation().Contains(new DefaultId(id)))
+                var subject = User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
+
+                if (_db.Entities().Keys().ContainsOperation().Contains(new DefaultId(id), subject))
                 {
-                    var key = _db.Entities().Keys().GetOperation().Key(new DefaultId(id));
-
-                    var subject = User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
-
-                    if (key.Organization().AuthorizedSubject().Equals(subject, StringComparison.Ordinal))
-                    {
-                        return new EntityAsJson(
-                            _db.Entities()
-                                .Keys()
-                                .InsertOperation()
-                                .Revoke(new DefaultId(id), DateTimeOffset.UtcNow)
-                        );
-                    }
-
-                    return new NotFoundResult();
+                    return new EntityAsJson(
+                        _db.Entities()
+                            .Keys()
+                            .InsertOperation()
+                            .Revoke(new DefaultId(id), DateTimeOffset.UtcNow)
+                    );
                 }
 
                 return new NotFoundResult();

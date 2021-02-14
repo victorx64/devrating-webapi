@@ -8,7 +8,7 @@ namespace DevRating.WebApi.Domain
         string? Name();
         string Value();
         DateTimeOffset? RevokedAt();
-        Organization Organization();
+        string Organization();
         DateTimeOffset CreatedAt();
     }
 }
