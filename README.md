@@ -21,3 +21,17 @@ dotnet run
 docker build -t webapi .
 docker run --name webapi -p 8000:80 -e 'ConnectionString="Server=mssql;User Id=sa;Password=65awe_5f651323d;"' --link=mssql -d webapi:latest
 ```
+
+## Seed DB
+
+```
+curl 'http://localhost:5000/api/v1/db/domain' -i
+curl 'http://localhost:5000/api/v1/db/web' -i
+```
+
+## Check db status
+
+```
+curl 'http://localhost:5000/api/v1/statuses/domain' | jq
+curl 'http://localhost:5000/api/v1/statuses/web' | jq
+```

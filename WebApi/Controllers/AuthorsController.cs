@@ -17,7 +17,7 @@ namespace DevRating.WebApi.Controllers
         private readonly Database _db;
 
         public AuthorsController(ILogger<AuthorsController> log, IConfiguration configuration)
-            : this (log, new SqlServerDatabase(new SqlConnection(configuration["ConnectionString"])))
+            : this(log, new SqlServerDatabase(new SqlConnection(configuration["ConnectionString"])))
         {
         }
 
@@ -49,15 +49,15 @@ namespace DevRating.WebApi.Controllers
             }
         }
 
-        [HttpGet("repositories/{organization}/{repo}/{after}")]
-        public IActionResult GetTop(string organization, string repo, DateTimeOffset after)
+        [HttpGet("top")]
+        public IActionResult GetTop(string organization, string repository, DateTimeOffset after)
         {
             _db.Instance().Connection().Open();
 
             try
             {
                 return new EntityAsJson(
-                    _db.Entities().Authors().GetOperation().Top(organization, repo, after)
+                    _db.Entities().Authors().GetOperation().Top(organization, repository, after)
                 );
             }
             finally
@@ -66,17 +66,17 @@ namespace DevRating.WebApi.Controllers
             }
         }
 
-        [HttpGet("{organization}/{repo}/{email}")]
-        public IActionResult GetByCreds(string organization, string repo, string email)
+        [HttpGet]
+        public IActionResult GetByCreds(string organization, string repository, string email)
         {
             _db.Instance().Connection().Open();
 
             try
             {
-                if (_db.Entities().Authors().ContainsOperation().Contains(organization, repo, email))
+                if (_db.Entities().Authors().ContainsOperation().Contains(organization, repository, email))
                 {
                     return new EntityAsJson(
-                        _db.Entities().Authors().GetOperation().Author(organization, repo, email)
+                        _db.Entities().Authors().GetOperation().Author(organization, repository, email)
                     );
                 }
 

@@ -27,11 +27,13 @@ namespace DevRating.WebApi.SqlServerClient
             return reader.Read();
         }
 
-        public bool Contains(Id id, string organization)
+        public bool Contains(Id id, string organization, bool revoked)
         {
             using var command = _connection.CreateCommand();
 
-            command.CommandText = "SELECT Id FROM [Key] WHERE Organization = @Organization AND Id = @Id";
+            command.CommandText = revoked
+                ? "SELECT Id FROM [Key] WHERE Organization = @Organization AND Id = @Id AND RevokedAt is not null"
+                : "SELECT Id FROM [Key] WHERE Organization = @Organization AND Id = @Id AND RevokedAt is null";
 
             command.Parameters.Add(new SqlParameter("@Id", SqlDbType.Int) {Value = id.Value()});
             command.Parameters.Add(new SqlParameter("@Organization", SqlDbType.NVarChar, 256) {Value = organization});
@@ -41,11 +43,13 @@ namespace DevRating.WebApi.SqlServerClient
             return reader.Read();
         }
 
-        public bool Contains(string organization, string value)
+        public bool Contains(string organization, string value, bool revoked)
         {
             using var command = _connection.CreateCommand();
 
-            command.CommandText = "SELECT Id FROM [Key] WHERE Organization = @Organization AND Value = @Value";
+            command.CommandText = revoked
+                ? "SELECT Id FROM [Key] WHERE Organization = @Organization AND Value = @Value AND RevokedAt is not null"
+                : "SELECT Id FROM [Key] WHERE Organization = @Organization AND Value = @Value AND RevokedAt is null";
 
             command.Parameters.Add(new SqlParameter("@Organization", SqlDbType.NVarChar, 256) {Value = organization});
             command.Parameters.Add(new SqlParameter("@Value", SqlDbType.NVarChar, 256) {Value = value});
