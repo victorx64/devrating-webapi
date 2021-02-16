@@ -25,13 +25,13 @@ docker run --name webapi -p 8000:80 -e 'ConnectionString="Server=mssql;User Id=s
 ## Seed DB
 
 ```
-curl 'http://localhost:5000/api/v1/db/domain' -i
-curl 'http://localhost:5000/api/v1/db/web' -i
+curl 'https://localhost:5001/db/domain' -i -L --insecure
+curl 'https://localhost:5001/db/web' -i -L --insecure
 ```
 
 ## Check db status
 
 ```
-curl 'http://localhost:5000/api/v1/statuses/domain' | jq
-curl 'http://localhost:5000/api/v1/statuses/web' | jq
+curl 'https://localhost:5001/statuses/domain' -i -L --insecure | jq
+curl 'https://localhost:5001/statuses/web' -i -L --insecure | jq
 ```
