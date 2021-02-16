@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Security.Claims;
 using System.Linq;
 using DevRating.DefaultObject;
 using DevRating.EloRating;
@@ -80,9 +81,14 @@ namespace DevRating.WebApi.Controllers
         }
 
         [Authorize]
-        [HttpPost]
+        [HttpPost("auth")]
         public IActionResult Post(Diff diff)
         {
+            if (User.FindFirst(ClaimTypes.NameIdentifier)!.Value != diff.Organization)
+            {
+                return new UnauthorizedObjectResult(new {message = "You can only post diffs of your organization"});
+            }
+
             _domainDb.Instance().Connection().Open();
 
             using var transaction = _domainDb.Instance().Connection().BeginTransaction();
@@ -128,8 +134,8 @@ namespace DevRating.WebApi.Controllers
             }
         }
 
-        [HttpPost("{key}")]
-        public IActionResult Post(string key, Diff diff)
+        [HttpPost("key")]
+        public IActionResult Post([FromHeader] string key, Diff diff)
         {
             var toPost = false;
 
@@ -137,7 +143,7 @@ namespace DevRating.WebApi.Controllers
 
             try
             {
-                toPost = _webDb.Entities().Keys().ContainsOperation().Contains(diff.Organization, key);
+                toPost = _webDb.Entities().Keys().ContainsOperation().Contains(diff.Organization, key, false);
             }
             finally
             {

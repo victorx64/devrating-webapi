@@ -32,7 +32,7 @@ namespace DevRating.WebApi.Controllers
             _webDb = webDb;
         }
 
-        [HttpGet("SeedDomainDb")]
+        [HttpGet("domain")]
         public IActionResult SeedDomainDb()
         {
             _log.LogInformation("Domain Db Seed requested");
@@ -67,7 +67,7 @@ namespace DevRating.WebApi.Controllers
             }
         }
 
-        [HttpGet("SeedWebDb")]
+        [HttpGet("web")]
         public IActionResult SeedWebDb()
         {
             _log.LogInformation("Web Db Seed requested");

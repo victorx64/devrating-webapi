@@ -38,13 +38,11 @@ namespace DevRating.WebApi.Controllers
 
             try
             {
-                var subject = User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
-
                 return new EntityAsJson(
                     _db.Entities()
                         .Keys()
                         .GetOperation()
-                        .OrganizationKeys(subject)
+                        .OrganizationKeys(User.FindFirst(ClaimTypes.NameIdentifier)!.Value)
                 );
             }
             finally
@@ -68,8 +66,6 @@ namespace DevRating.WebApi.Controllers
 
             try
             {
-                var subject = User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
-
                 return new EntityAsJson(
                     _db.Entities()
                         .Keys()
@@ -77,7 +73,7 @@ namespace DevRating.WebApi.Controllers
                         .Insert(
                             key.Name,
                             key.Value,
-                            subject,
+                            User.FindFirst(ClaimTypes.NameIdentifier)!.Value,
                             DateTimeOffset.UtcNow
                         )
                 );
@@ -96,9 +92,12 @@ namespace DevRating.WebApi.Controllers
 
             try
             {
-                var subject = User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
-
-                if (_db.Entities().Keys().ContainsOperation().Contains(new DefaultId(id), subject))
+                if (
+                    _db.Entities()
+                        .Keys()
+                        .ContainsOperation()
+                        .Contains(new DefaultId(id), User.FindFirst(ClaimTypes.NameIdentifier)!.Value, false)
+                )
                 {
                     return new EntityAsJson(
                         _db.Entities()

@@ -31,7 +31,7 @@ namespace DevRating.WebApi.Controllers
             _webDb = webDb;
         }
 
-        [HttpGet("Domain")]
+        [HttpGet("domain")]
         public IActionResult DomainStatus()
         {
             _domainDb.Instance().Connection().Open();
@@ -51,7 +51,7 @@ namespace DevRating.WebApi.Controllers
             }
         }
 
-        [HttpGet("Web")]
+        [HttpGet("web")]
         public IActionResult WebStatus()
         {
             _webDb.Instance().Connection().Open();
