@@ -89,6 +89,11 @@ namespace DevRating.WebApi.Controllers
                 return new UnauthorizedObjectResult(new {message = "You can only post diffs of your organization"});
             }
 
+            return Insert(diff);
+        }
+
+        private IActionResult Insert(Diff diff)
+        {
             _domainDb.Instance().Connection().Open();
 
             using var transaction = _domainDb.Instance().Connection().BeginTransaction();
@@ -152,7 +157,7 @@ namespace DevRating.WebApi.Controllers
 
             if (toPost)
             {
-                return Post(diff);
+                return Insert(diff);
             }
             else
             {
