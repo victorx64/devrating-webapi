@@ -68,9 +68,7 @@ namespace DevRating.SqlServerClient
                     Additions int not null,
                     UsedRatingId int
                         constraint FK_Work_RatingId
-                            references Rating,
-                    constraint UK_Work_Commits
-                        unique (StartCommit, EndCommit)
+                            references Rating
                 );";
 
             command.ExecuteNonQuery();
