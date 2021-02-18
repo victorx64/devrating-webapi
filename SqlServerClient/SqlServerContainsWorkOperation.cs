@@ -1,3 +1,4 @@
+using System;
 using System.Data;
 using DevRating.Domain;
 using Microsoft.Data.SqlClient;
@@ -49,5 +50,25 @@ namespace DevRating.SqlServerClient
             return reader.Read();
         }
 
+        public bool Contains(string organization, string repository, DateTimeOffset after)
+        {
+            using var command = _connection.CreateCommand();
+
+            command.CommandText = @"
+                SELECT w.Id
+                FROM Work w
+                INNER JOIN Author a on a.Id = w.AuthorId
+                WHERE a.Organization = @Organization
+                AND a.Repository = @Repository
+                AND w.CreatedAt >= @After";
+
+            command.Parameters.Add(new SqlParameter("@Organization", SqlDbType.NVarChar, 256) {Value = organization});
+            command.Parameters.Add(new SqlParameter("@Repository", SqlDbType.NVarChar, 256) {Value = repository});
+            command.Parameters.Add(new SqlParameter("@After", SqlDbType.DateTimeOffset) { Value = after });
+
+            using var reader = command.ExecuteReader();
+
+            return reader.Read();
+        }
     }
 }
