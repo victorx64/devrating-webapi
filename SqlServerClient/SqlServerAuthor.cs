@@ -28,20 +28,7 @@ namespace DevRating.SqlServerClient
         private sealed class Dto
         {
             public object Id { get; set; } = new object();
-
-            private string _email = string.Empty;
-
-            public string Email
-            {
-                get
-                {
-                    var at = _email.IndexOf("@", StringComparison.Ordinal);
-
-                    return _email.Substring(0, at);
-                }
-                set { _email = value; }
-            }
-
+            public string Email{ get; set; } = string.Empty;
             public object? RatingId { get; set; }
             public double? Rating { get; set; }
             public string Organization { get; set; } = string.Empty;
