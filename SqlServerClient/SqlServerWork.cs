@@ -39,19 +39,7 @@ namespace DevRating.SqlServerClient
             public double? NewRating { get; set; }
             public uint Additions { get; set; }
             public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.MinValue;
-
-            private string _email = string.Empty;
-
-            public string AuthorEmail
-            {
-                get
-                {
-                    var at = _email.IndexOf("@", StringComparison.Ordinal);
-
-                    return _email.Substring(0, at);
-                }
-                set { _email = value; }
-            }
+            public string AuthorEmail{ get; set; } = string.Empty;
         }
 
         public string ToJson()

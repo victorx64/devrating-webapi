@@ -32,22 +32,7 @@ namespace DevRating.SqlServerClient
             public object WorkId { get; set; } = new object();
             public object AuthorId { get; set; } = new object();
             public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.MinValue;
-            private string _email = string.Empty;
-
-            public string AuthorEmail
-            {
-                get
-                {
-                    var at = _email.IndexOf("@", StringComparison.Ordinal);
-
-                    return _email.Substring(0, at);
-                }
-                set
-                {
-                    _email = value;
-                }
-            }
-
+            public string AuthorEmail{ get; set; } = string.Empty;
             public uint? CountedDeletions { get; set; }
             public uint? IgnoredDeletions { get; set; }
         }
